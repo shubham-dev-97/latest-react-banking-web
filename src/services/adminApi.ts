@@ -5,10 +5,12 @@ import {
     BranchAccessRequest, RegionAccessRequest
 } from '../types/admin';
 
-const API_BASE_URL = 'https://localhost:7009/api/admin';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:7009/api';
+// const API_BASE_URL = 'https://localhost:7009/api/admin';
 
 const api = axios.create({
-    baseURL: API_BASE_URL,
+     baseURL:`${API_BASE_URL}/admin`,
     headers: {
         'Content-Type': 'application/json',
     },
