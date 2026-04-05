@@ -6,7 +6,7 @@ import {
 } from '../types/admin';
 
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:7009/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://nerofinsbankapi.azurewebsites.net/api';
 // const API_BASE_URL = 'https://localhost:7009/api/admin';
 
 const api = axios.create({

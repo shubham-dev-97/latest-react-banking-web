@@ -38,7 +38,7 @@ export const useAuth = () => {
         try {
             console.log('🔍 login attempt for:', username);
             
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:7009/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://nerofinsbankapi.azurewebsites.net/api';
             const response = await fetch(`${API_BASE_URL}/Auth/login`, {
                 method: 'POST',
                 headers: {
