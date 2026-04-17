@@ -141,16 +141,6 @@ const Summary: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', p: 2 }}>
             <Container maxWidth={false}>
-                {/* Header */}
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                        Banking Summary
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                        Comprehensive overview of all banking activities
-                    </Typography>
-                </Box>
-
                 {/* Filters with As On Date */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2} alignItems="center">
@@ -173,41 +163,7 @@ const Summary: React.FC = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-
-                        {/* Branch Filter */}
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <FormControl fullWidth size="small">
-                                <InputLabel>Branch</InputLabel>
-                                <Select
-                                    value={branchCode}
-                                    label="Branch"
-                                    onChange={(e) => setBranchCode(e.target.value)}
-                                >
-                                    <MenuItem value="">All Branches</MenuItem>
-                                    <MenuItem value="BR001">Branch 001</MenuItem>
-                                    <MenuItem value="BR002">Branch 002</MenuItem>
-                                    <MenuItem value="BR003">Branch 003</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        {/* Year Filter */}
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <FormControl fullWidth size="small">
-                                <InputLabel>Year</InputLabel>
-                                <Select
-                                    value={year}
-                                    label="Year"
-                                    onChange={(e) => setYear(e.target.value as number)}
-                                >
-                                    <MenuItem value={2024}>2024</MenuItem>
-                                    <MenuItem value={2023}>2023</MenuItem>
-                                    <MenuItem value={2022}>2022</MenuItem>
-                                    <MenuItem value={2021}>2021</MenuItem>
-                                    <MenuItem value={2020}>2020</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+                       
                     </Grid>
                 </Paper>
 

@@ -70,16 +70,6 @@ const GLDashboard: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', p: 2 }}>
             <Container maxWidth={false}>
-                {/* Header */}
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                        GL Dashboard Summary
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                        General Ledger financial position and performance
-                    </Typography>
-                </Box>
-
                 {/* Date Filter */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2} alignItems="center">

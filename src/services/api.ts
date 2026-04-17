@@ -8,10 +8,10 @@ import {
 } from '../types';
 
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://nerofinsbankapi.azurewebsites.net/api';
+const API_BASE_URL = 'https://localhost:7009/api/dashboard';
 
 const api = axios.create({
-    baseURL:`${API_BASE_URL}/dashboard`,
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -133,6 +133,54 @@ getLoanTrend: async (asOnDate: string): Promise<LoanTrend[]> => {
         params: { asOnDate } 
     });
     console.log('📈 Loan trend:', response.data);
+    return response.data;
+},
+
+
+getAlmBucketRBI: async (asOnDate: string): Promise<AlmBucketRBI[]> => {
+    console.log('🏦 Fetching ALM Bucket RBI data for date:', asOnDate);
+    const response = await api.get<AlmBucketRBI[]>('/alm-bucket-rbi', { 
+        params: { asOnDate } 
+    });
+    console.log('🏦 ALM Bucket RBI:', response.data);
+    return response.data;
+},
+
+
+getDepLoanMonthlyTrendWithCDRatio: async (asOnDate: string): Promise<DepLoanMonthlyTrend[]> => {
+    console.log('📊 Fetching Deposit vs Loan monthly trend with CD Ratio for date:', asOnDate);
+    const response = await api.get<DepLoanMonthlyTrend[]>('/dep-loan-monthly-trend', { 
+        params: { asOnDate } 
+    });
+    console.log('📊 Deposit-Loan trend data:', response.data);
+    return response.data;
+},
+
+getRbiLoanAuditDump: async (asOnDate: string): Promise<RbiLoanAuditDump[]> => {
+    console.log('📋 Fetching RBI Loan Audit Dump for date:', asOnDate);
+    const response = await api.get<RbiLoanAuditDump[]>('/rbi-loan-audit', { 
+        params: { asOnDate } 
+    });
+    console.log('📋 RBI Loan Audit response:', response.data);
+    console.log('📋 First record:', response.data[0]);
+    return response.data;
+},
+
+
+getRbiDepositAuditDump: async (asOnDate: string): Promise<RbiDepositAuditDump[]> => {
+    console.log('🏦 Fetching RBI Deposit Audit Dump for date:', asOnDate);
+    const response = await api.get<RbiDepositAuditDump[]>('/rbi-deposit-audit', { 
+        params: { asOnDate } 
+    });
+    console.log('🏦 RBI Deposit Audit records:', response.data.length);
+    return response.data;
+},
+
+getRbiDepositAuditDumpPaginated: async (asOnDate: string, pageNumber: number, pageSize: number): Promise<{ data: RbiDepositAuditDump[], totalCount: number, pageNumber: number, pageSize: number, totalPages: number }> => {
+    console.log('🏦 Fetching paginated RBI Deposit Audit for date:', asOnDate, 'Page:', pageNumber, 'Size:', pageSize);
+    const response = await api.get('/rbi-deposit-audit-paginated', { 
+        params: { asOnDate, pageNumber, pageSize } 
+    });
     return response.data;
 },
 };

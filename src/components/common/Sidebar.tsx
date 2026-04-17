@@ -49,7 +49,7 @@ const Sidebar = ({ mobileOpen, onClose }: any) => {
 
         // Add other pages based on allowedPages
         if (allowedPages.includes(PAGES.HOME)) {
-            items.push({ text: 'Home', icon: <HomeIcon />, path: PAGES.HOME });
+            items.push({ text: 'CEO Dashboard', icon: <HomeIcon />, path: PAGES.HOME });
         }
 
         if (allowedPages.includes(PAGES.DEPOSIT)) {

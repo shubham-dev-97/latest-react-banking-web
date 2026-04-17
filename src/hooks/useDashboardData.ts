@@ -88,6 +88,54 @@ export const useLoanPortfolioOverview = (asOnDate: string) => {
         enabled: !!asOnDate && asOnDate !== 'all',
     });
 };
+
+
+export const useAlmBucketRBI = (asOnDate: string) => {
+    return useQuery({
+        queryKey: ['almBucketRBI', asOnDate],
+        queryFn: () => dashboardApi.getAlmBucketRBI(asOnDate),
+        enabled: !!asOnDate && asOnDate !== 'all',
+    });
+};
+
+
+export const useDepLoanMonthlyTrendWithCDRatio = (asOnDate: string) => {
+    return useQuery({
+        queryKey: ['depLoanMonthlyTrend', asOnDate],
+        queryFn: () => dashboardApi.getDepLoanMonthlyTrendWithCDRatio(asOnDate),
+        enabled: !!asOnDate && asOnDate !== 'all',
+    });
+};
+
+
+export const useRbiLoanAuditDump = (asOnDate: string) => {
+    return useQuery({
+        queryKey: ['rbiLoanAudit', asOnDate],
+        queryFn: () => dashboardApi.getRbiLoanAuditDump(asOnDate),
+        enabled: !!asOnDate && asOnDate !== 'all',
+    });
+};
+
+
+export const useRbiDepositAuditDump = (asOnDate: string) => {
+    return useQuery({
+        queryKey: ['rbiDepositAudit', asOnDate],
+        queryFn: () => dashboardApi.getRbiDepositAuditDump(asOnDate),
+        enabled: !!asOnDate && asOnDate !== 'all',
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        retry: 1,
+    });
+};
+
+export const useRbiDepositAuditDumpPaginated = (asOnDate: string, pageNumber: number, pageSize: number) => {
+    return useQuery({
+        queryKey: ['rbiDepositAudit', asOnDate, pageNumber, pageSize],
+        queryFn: () => dashboardApi.getRbiDepositAuditDumpPaginated(asOnDate, pageNumber, pageSize),
+        enabled: !!asOnDate && asOnDate !== 'all',
+        staleTime: 5 * 60 * 1000,
+        keepPreviousData: true,
+    });
+};
 // Combined hook for dashboard data
 export const useDashboardData = () => {
     const [branchCode, setBranchCode] = useState<string>('');

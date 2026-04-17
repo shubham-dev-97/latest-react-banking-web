@@ -1,13 +1,12 @@
 export const PAGES = {
     ADMIN: '/admin',
-    HOME: '/home',
+    HOME: '/ceo-dashboard',  
     DEPOSIT: '/deposit',
     LOAN: '/loan',
     SUMMARY: '/summary',
     CASA: '/casa',
-    GL: '/gl-dashboard'
-} as const;
-
+    GL: '/gl-dashboard',
+};
 export type PagePath = typeof PAGES[keyof typeof PAGES];
 
 // Helper to get user role consistently

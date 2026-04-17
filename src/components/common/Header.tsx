@@ -50,8 +50,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             case '/':
             case '/admin':
                 return 'Admin Dashboard';
-            case '/home':
-                return 'Home Dashboard';
+            case '/ceo-dashboard':
+                return 'CEO Dashboard';
             case '/deposit':
                 return 'Deposit Analysis';
             case '/loan':
@@ -123,7 +123,10 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 </Typography>
                 
                 {/* Currency Selector */}
-                <Box sx={{ mr: 2 }}>
+                <Box sx={{ mr: 2,
+                bgcolor: '#f5f5f5',
+
+                }}>
                     <CurrencySelector />
                 </Box>
                 

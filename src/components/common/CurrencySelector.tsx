@@ -27,7 +27,7 @@ const CurrencySelector: React.FC = () => {
     return (
         <Box sx={{ minWidth: 150}}>
             <FormControl fullWidth size="small">
-                <InputLabel sx={{color:"white"}}>Currency Format</InputLabel>
+                <InputLabel sx={{color:"white"}}></InputLabel>
                 <Select
                     value={currencyUnit}
                     label="Currency Format"

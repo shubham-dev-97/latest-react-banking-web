@@ -113,35 +113,6 @@ const Loan: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', p: 2 }}>
             <Container maxWidth={false}>
-                {/* Header Section */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                    <Box>
-                        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                            Loan Analysis
-                        </Typography>
-                        <Typography variant="body1" color="textSecondary">
-                            Detailed view of all loan accounts and their performance
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Button 
-                            variant="outlined" 
-                            startIcon={<DownloadIcon />}
-                            onClick={handleExport}
-                            sx={{ mr: 1 }}
-                        >
-                            Export
-                        </Button>
-                        <Button 
-                            variant="outlined" 
-                            startIcon={<RefreshIcon />}
-                            onClick={handleRefresh}
-                        >
-                            Refresh
-                        </Button>
-                    </Box>
-                </Box>
-
                 {/* Main Filters - As On Date and Year */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2} alignItems="center">
@@ -164,93 +135,7 @@ const Loan: React.FC = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
-
-                        {/* Year Filter */}
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <TextField
-                                fullWidth
-                                size="small"
-                                label="Year"
-                                type="number"
-                                value={filters.year}
-                                onChange={(e) => handleFilterChange('year', parseInt(e.target.value) || new Date().getFullYear())}
-                                inputProps={{ min: 2020, max: 2030 }}
-                            />
                         </Grid>
-
-                        <Grid size={{ xs: 12, md: 3 }}>
-                            <Button
-                                variant="outlined"
-                                startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                                onClick={() => setShowFilters(!showFilters)}
-                            >
-                                Advanced Filters
-                            </Button>
-                        </Grid>
-                    </Grid>
-
-                    {/* Advanced Filters */}
-                    <Collapse in={showFilters}>
-                        <Grid container spacing={2} sx={{ mt: 2 }}>
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <FormControl fullWidth size="small">
-                                    <InputLabel>Branch</InputLabel>
-                                    <Select
-                                        value={filters.branchCode}
-                                        label="Branch"
-                                        onChange={(e) => handleFilterChange('branchCode', e.target.value)}
-                                    >
-                                        <MenuItem value="">All Branches</MenuItem>
-                                        <MenuItem value="BR001">Branch 001</MenuItem>
-                                        <MenuItem value="BR002">Branch 002</MenuItem>
-                                        <MenuItem value="BR003">Branch 003</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    label="Scheme Code"
-                                    value={filters.schemeCode}
-                                    onChange={(e) => handleFilterChange('schemeCode', e.target.value)}
-                                />
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    label="Purpose"
-                                    value={filters.purpose}
-                                    onChange={(e) => handleFilterChange('purpose', e.target.value)}
-                                />
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    label="Segment"
-                                    value={filters.segment}
-                                    onChange={(e) => handleFilterChange('segment', e.target.value)}
-                                />
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 3 }}>
-                                <FormControl fullWidth size="small">
-                                    <InputLabel>Status</InputLabel>
-                                    <Select
-                                        value={filters.accountStatus}
-                                        label="Status"
-                                        onChange={(e) => handleFilterChange('accountStatus', e.target.value)}
-                                    >
-                                        <MenuItem value="">All</MenuItem>
-                                        <MenuItem value="ACTIVE">Active</MenuItem>
-                                        <MenuItem value="OVERDUE">Overdue</MenuItem>
-                                        <MenuItem value="CLOSED">Closed</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-                    </Collapse>
                 </Paper>
 
                 {/* KPI Cards - Row 1 */}
@@ -298,7 +183,7 @@ const Loan: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
                             title="Total Accounts"
-                            value={formatNumber(portfolioOverview?.total_Accounts)}
+                            value={(portfolioOverview?.total_Accounts)}
                             subtitle="All loan accounts"
                             icon={<People />}
                             colorIndex={0}
@@ -307,7 +192,7 @@ const Loan: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
                             title="Active Accounts"
-                            value={formatNumber(portfolioOverview?.active_Accounts)}
+                            value={(portfolioOverview?.active_Accounts)}
                             subtitle={`${activePercentage.toFixed(1)}% of total`}
                             icon={<CheckCircle />}
                             colorIndex={3}
@@ -316,7 +201,7 @@ const Loan: React.FC = () => {
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
                             title="Overdue Accounts"
-                            value={formatNumber(portfolioOverview?.overdue_Accounts)}
+                            value={(portfolioOverview?.overdue_Accounts)}
                             subtitle={`${overduePercentage.toFixed(1)}% of total`}
                             icon={<Warning />}
                             colorIndex={1}
@@ -432,76 +317,6 @@ const Loan: React.FC = () => {
                         />
                     </Grid>
                 </Grid>
-
-                {/* Detailed Data Table */}
-                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                    <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 600, color: '#1a237e' }}>
-                        Detailed Loan Analysis
-                    </Typography>
-                    <TableContainer sx={{ maxHeight: 500 }}>
-                        <Table stickyHeader size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Branch</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Scheme</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Purpose</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Segment</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">Count</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">Sanctioned</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">Outstanding</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">Overdue</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">Avg Rate</TableCell>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="center">Status</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {filteredData.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={10} align="center" sx={{ py: 3 }}>
-                                            <Typography color="textSecondary">No data available</Typography>
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    filteredData.map((row, index) => (
-                                        <TableRow key={index} hover>
-                                            <TableCell>{row.branchCode || '-'}</TableCell>
-                                            <TableCell>{row.loanSchemeCode || '-'}</TableCell>
-                                            <TableCell>{row.purpose || '-'}</TableCell>
-                                            <TableCell>{row.segment || '-'}</TableCell>
-                                            <TableCell align="right">{row.loanCount?.toLocaleString()}</TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#9c27b0' }}>
-                                                {formatCurrency(row.totalSanctionAmount)}
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#f44336' }}>
-                                                {formatCurrency(row.totalOutstanding)}
-                                            </TableCell>
-                                            <TableCell 
-                                                align="right" 
-                                                sx={{ 
-                                                    fontWeight: 600, 
-                                                    color: row.totalOverdueAmount ? '#d32f2f' : 'inherit'
-                                                }}
-                                            >
-                                                {formatCurrency(row.totalOverdueAmount)}
-                                            </TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 500 }}>
-                                                {formatPercentage(row.avgInterestRate)}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Chip 
-                                                    label={row.accountStatus || 'Unknown'} 
-                                                    color={getStatusColor(row.accountStatus)}
-                                                    size="small"
-                                                    sx={{ minWidth: 70 }}
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Paper>
             </Container>
         </Box>
     );

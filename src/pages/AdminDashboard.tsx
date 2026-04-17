@@ -292,38 +292,6 @@ const AdminDashboard: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', bgcolor: '#f5f5f5' }}>
             <Container maxWidth={false} sx={{ py: 2, px: { xs: 2, md: 3 } }}>
-                {/* Header */}
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <AdminPanelSettings sx={{ fontSize: 40, color: '#1a237e', mr: 2 }} />
-                        <Box>
-                            <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                                Admin Dashboard
-                            </Typography>
-                            <Typography variant="body1" color="textSecondary">
-                                System administration and user management
-                            </Typography>
-                        </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="Export Data">
-                            <IconButton>
-                                <CloudDownload />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Print">
-                            <IconButton>
-                                <Print />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Refresh">
-                            <IconButton onClick={() => refetchUsers()}>
-                                <Refresh />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Box>
-
                 {/* Tabs as Buttons */}
                 <Box sx={{ mb: 3 }}>
                     <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>

@@ -68,16 +68,6 @@ const CASASummary: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', p: 2 }}>
             <Container maxWidth={false}>
-                {/* Header Section */}
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                        CASA Summary
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                        Current Account and Savings Account Analysis
-                    </Typography>
-                </Box>
-
                 {/* Date Filter */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2} alignItems="center">
@@ -121,7 +111,7 @@ const CASASummary: React.FC = () => {
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
                                     title="Total CASA Accounts"
-                                    value={formatNumber(totalAccounts)}
+                                    value={(totalAccounts)}
                                     icon={<AccountBalance />}
                                     colorIndex={3} // Green
                                 />
@@ -168,7 +158,7 @@ const CASASummary: React.FC = () => {
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
                                     title="Savings Accounts"
-                                    value={formatNumber(savingsData?.cnt)}
+                                    value={(savingsData?.cnt)}
                                     icon={<Assessment />}
                                     colorIndex={0} // Purple
                                 />
@@ -176,7 +166,7 @@ const CASASummary: React.FC = () => {
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
                                     title="Current Accounts"
-                                    value={formatNumber(currentData?.cnt)}
+                                    value={(currentData?.cnt)}
                                     icon={<Assessment />}
                                     colorIndex={2} // Blue
                                 />
