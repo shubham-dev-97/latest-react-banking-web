@@ -8,7 +8,10 @@ import {
 } from '../types';
 
 
-const API_BASE_URL = 'https://localhost:7009/api/dashboard';
+//const API_BASE_URL = 'https://localhost:7009/api/dashboard';
+
+const API_BASE_URL = 'https://nerofinsbankapi.azurewebsites.net/api/dashboard';
+
 
 const api = axios.create({
     baseURL: API_BASE_URL,
