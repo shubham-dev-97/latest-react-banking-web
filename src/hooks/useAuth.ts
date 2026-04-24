@@ -1,12 +1,32 @@
 import { useState, useEffect } from 'react';
 
+// interface LoginResponse {
+//     success: boolean;
+//     message: string;
+//     token?: string;
+//     user?: any;
+// }
+
+
+interface User {
+    userID: number;
+    userLoginID: string;
+    userName: string;
+    emailID: string;
+    roleID: number;
+    roleName: string;
+    branchID?: number;
+    regionID?: number;
+    department: string;
+}
+
 interface LoginResponse {
     success: boolean;
     message: string;
     token?: string;
-    user?: any;
+    expiration?: string;
+    user?: User;
 }
-
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState<any>(null);

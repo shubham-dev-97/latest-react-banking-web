@@ -44,32 +44,34 @@ const Login: React.FC = () => {
             setError('Please enter both username and password');
             return;
         }
-
+         
         try {
             const response = await login(
                 formData.userLoginID,
                 formData.password
             );
 
-            if (response.success) {
-
-               
-                const role = getUserRole(response.user);
-
-                console.log("User:", response.user);
+            if (response && response.success) {
+                // Get user from response
+                const userData = response.user;
+                console.log("User:", userData);
+                
+                // Get role from user data
+                const role = getUserRole(userData);
                 console.log("Role:", role);
 
-                // GET DEFAULT ROUTE
+                // Get default route
                 const defaultRoute = getDefaultRoute(role);
 
-                //  NAVIGATE
+                // Navigate
                 navigate(defaultRoute);
 
             } else {
-                setError(response.message || 'Login failed. Please check your credentials.');
+                setError(response?.message || 'Login failed. Please check your credentials.');
             }
 
         } catch (err: any) {
+            console.error('Login error:', err);
             setError(err.message || 'An error occurred during login');
         }
     };
