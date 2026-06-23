@@ -4,7 +4,7 @@ import {
     FormControl, InputLabel, Select, MenuItem, TextField,
     Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Chip, Typography, IconButton,
-    Collapse, Card, CardContent, Button, CircularProgress
+    Collapse, Card, CardContent, Button, CircularProgress, TablePagination
 } from '@mui/material';
 import {
     Refresh as RefreshIcon,
@@ -15,12 +15,13 @@ import {
     People, Warning, CheckCircle, Cancel
 } from '@mui/icons-material';
 import { useLoanAnalysis, useLoanPortfolioOverview } from '../hooks/useDashboardData';
-import { formatCurrency, formatPercentage, formatNumber } from '../utils/formatters';
+import { formatCurrency, formatPercentage, formatNumber, formatDateToDDMMYYYY } from '../utils/formatters';
 import StyledCard from '../components/common/StyledCard';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useSharedData } from '../contexts/DataContext';
 import { useLoanTrend } from '../hooks/useTrendData';
 import TrendChart from '../components/dashboard/TrendChart';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Loan: React.FC = () => {
     const [showFilters, setShowFilters] = useState(false);
@@ -32,6 +33,8 @@ const Loan: React.FC = () => {
         accountStatus: '',
         year: new Date().getFullYear(),
     });
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Get shared data from context
     const { 
@@ -40,6 +43,9 @@ const Loan: React.FC = () => {
         availableDates,
         datesLoading
     } = useSharedData();
+
+    // Translation hook
+    const { t } = useTranslation();
 
     // Fetch portfolio overview data
     const { 
@@ -89,13 +95,7 @@ const Loan: React.FC = () => {
         }
     };
 
-    if (overviewLoading || detailedLoading || datesLoading || trendLoading) {
-        return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <CircularProgress />
-            </Box>
-        );
-    }
+
 
     // Calculate percentages
     const activePercentage = portfolioOverview?.total_Accounts 
@@ -113,65 +113,154 @@ const Loan: React.FC = () => {
     return (
         <Box sx={{ width: '100%', height: '100%', overflow: 'auto', p: 2 }}>
             <Container maxWidth={false}>
+                {/* Header */}
+                
+
                 {/* Main Filters - As On Date and Year */}
                 <Paper sx={{ p: 2, mb: 3 }}>
                     <Grid container spacing={2} alignItems="center">
                         {/* As On Date Dropdown */}
                         <Grid size={{ xs: 12, md: 3 }}>
                             <FormControl fullWidth size="small">
-                                <InputLabel>As On Date</InputLabel>
+                                <InputLabel>{t('home.as_on_date')}</InputLabel>
                                 <Select
                                     value={selectedDate}
-                                    label="As On Date"
+                                    label={t('home.as_on_date')}
                                     onChange={(e) => setSelectedDate(e.target.value)}
                                 >
                                     {datesLoading ? (
-                                        <MenuItem disabled>Loading dates...</MenuItem>
+                                        <MenuItem disabled>{t('common.loading')}</MenuItem>
                                     ) : availableDates?.map((date) => (
                                         <MenuItem key={date} value={date}>
-                                            {date}
+                                            {formatDateToDDMMYYYY(date)}
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
                         </Grid>
+
+                        {/* Year Filter */}
+                        <Grid size={{ xs: 12, md: 3 }}>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                label={t('loan.year')}
+                                type="number"
+                                value={filters.year}
+                                onChange={(e) => handleFilterChange('year', parseInt(e.target.value) || new Date().getFullYear())}
+                                inputProps={{ min: 2020, max: 2030 }}
+                            />
                         </Grid>
+
+                        <Grid size={{ xs: 12, md: 3 }}>
+                            <Button
+                                variant="outlined"
+                                startIcon={showFilters ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                onClick={() => setShowFilters(!showFilters)}
+                            >
+                                {t('loan.advanced_filters')}
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    {/* Advanced Filters */}
+                    <Collapse in={showFilters}>
+                        <Grid container spacing={2} sx={{ mt: 2 }}>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>{t('loan.branch')}</InputLabel>
+                                    <Select
+                                        value={filters.branchCode}
+                                        label={t('loan.branch')}
+                                        onChange={(e) => handleFilterChange('branchCode', e.target.value)}
+                                    >
+                                        <MenuItem value="">{t('loan.all_branches')}</MenuItem>
+                                        <MenuItem value="BR001">Branch 001 - Downtown</MenuItem>
+                                        <MenuItem value="BR002">Branch 002 - Uptown</MenuItem>
+                                        <MenuItem value="BR003">Branch 003 - Central</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label={t('loan.scheme_code')}
+                                    value={filters.schemeCode}
+                                    onChange={(e) => handleFilterChange('schemeCode', e.target.value)}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label={t('loan.purpose')}
+                                    value={filters.purpose}
+                                    onChange={(e) => handleFilterChange('purpose', e.target.value)}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    label={t('loan.segment')}
+                                    value={filters.segment}
+                                    onChange={(e) => handleFilterChange('segment', e.target.value)}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 3 }}>
+                                <FormControl fullWidth size="small">
+                                    <InputLabel>{t('loan.account_status')}</InputLabel>
+                                    <Select
+                                        value={filters.accountStatus}
+                                        label={t('loan.account_status')}
+                                        onChange={(e) => handleFilterChange('accountStatus', e.target.value)}
+                                    >
+                                        <MenuItem value="">{t('common.all')}</MenuItem>
+                                        <MenuItem value="ACTIVE">{t('loan.active')}</MenuItem>
+                                        <MenuItem value="OVERDUE">{t('loan.overdue')}</MenuItem>
+                                        <MenuItem value="CLOSED">{t('loan.closed')}</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                    </Collapse>
                 </Paper>
 
                 {/* KPI Cards - Row 1 */}
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Loan Amount"
+                            title={t('loan.total_loan_amount')}
                             value={formatCurrency(portfolioOverview?.total_Loan_Amount)}
-                            subtitle="Sanctioned amount"
+                            subtitle={t('loan.sanctioned_amount')}
                             icon={<AccountBalance />}
                             colorIndex={0}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Outstanding"
+                            title={t('loan.total_outstanding')}
                             value={formatCurrency(portfolioOverview?.total_Outstanding)}
-                            subtitle="Current outstanding"
+                            subtitle={t('loan.current_outstanding')}
                             icon={<AttachMoney />}
                             colorIndex={2}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Overdue"
+                            title={t('loan.total_overdue')}
                             value={formatCurrency(portfolioOverview?.total_Overdue)}
-                            subtitle={`${overdueRatio.toFixed(1)}% of outstanding`}
+                            subtitle={`${overdueRatio.toFixed(1)}% ${t('loan.of_outstanding')}`}
                             icon={<Warning />}
                             colorIndex={1}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Average Interest Rate"
+                            title={t('loan.avg_interest_rate')}
                             value={formatPercentage(portfolioOverview?.avg_Interest_Rate)}
-                            subtitle="Portfolio average"
+                            subtitle={t('loan.portfolio_average')}
                             icon={<TrendingUp />}
                             colorIndex={4}
                         />
@@ -182,36 +271,36 @@ const Loan: React.FC = () => {
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Accounts"
+                            title={t('loan.total_accounts')}
                             value={(portfolioOverview?.total_Accounts)}
-                            subtitle="All loan accounts"
+                            subtitle={t('loan.all_loan_accounts')}
                             icon={<People />}
                             colorIndex={0}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Active Accounts"
+                            title={t('loan.active_accounts')}
                             value={(portfolioOverview?.active_Accounts)}
-                            subtitle={`${activePercentage.toFixed(1)}% of total`}
+                            subtitle={`${activePercentage.toFixed(1)}% ${t('loan.of_total')}`}
                             icon={<CheckCircle />}
                             colorIndex={3}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Overdue Accounts"
+                            title={t('loan.overdue_accounts')}
                             value={(portfolioOverview?.overdue_Accounts)}
-                            subtitle={`${overduePercentage.toFixed(1)}% of total`}
+                            subtitle={`${overduePercentage.toFixed(1)}% ${t('loan.of_total')}`}
                             icon={<Warning />}
                             colorIndex={1}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Average Loan Size"
+                            title={t('loan.average_loan_size')}
                             value={formatCurrency(portfolioOverview?.avg_Loan_Size)}
-                            subtitle="Per account average"
+                            subtitle={t('loan.per_account_average')}
                             icon={<AttachMoney />}
                             colorIndex={5}
                         />
@@ -219,23 +308,23 @@ const Loan: React.FC = () => {
                 </Grid>
 
                 {/* Loan Trend - Last 6 Months */}
-                <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight: 600, color: '#1a237e', display: 'flex', alignItems: 'center', gap: 1 }}>
-                    📊 Loan Portfolio Trends
-                    <Chip label="Last 6 Months" size="small" color="primary" />
+                <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight: 600, color: 'primary.main', display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <TrendingUp sx={{ color: '#2563EB' }} /> {t('loan.loan_portfolio_trends')}
+                    <Chip label={t('loan.last_6_months')} size="small" color="primary" />
                 </Typography>
 
                 <Grid container spacing={3} sx={{ mb: 4 }}>
                     {/* Total Outstanding Trend */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <TrendChart
-                            title="Total Outstanding Trend"
+                            title={t('loan.total_outstanding_trend')}
                             data={loanTrend?.map(item => ({
                                 monthName: item.monthName,
                                 totalOutstanding: item.totalOutstanding
                             })) || []}
                             type="area"
                             dataKeys={[
-                                { key: 'totalOutstanding', name: 'Total Outstanding', color: '#f44336', type: 'currency' }
+                                { key: 'totalOutstanding', name: t('loan.total_outstanding'), color: '#DC2626', type: 'currency' }
                             ]}
                             showTrend={true}
                             showAverage={true}
@@ -246,14 +335,14 @@ const Loan: React.FC = () => {
                     {/* Total Sanctioned Trend */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <TrendChart
-                            title="Total Sanctioned Trend"
+                            title={t('loan.total_sanctioned_trend')}
                             data={loanTrend?.map(item => ({
                                 monthName: item.monthName,
                                 totalSanctioned: item.totalSanctioned
                             })) || []}
                             type="area"
                             dataKeys={[
-                                { key: 'totalSanctioned', name: 'Total Sanctioned', color: '#9c27b0', type: 'currency' }
+                                { key: 'totalSanctioned', name: t('loan.total_sanctioned'), color: '#7C3AED', type: 'currency' }
                             ]}
                             showTrend={true}
                             showAverage={true}
@@ -264,14 +353,14 @@ const Loan: React.FC = () => {
                     {/* Account Growth Trend */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <TrendChart
-                            title="Account Growth Trend"
+                            title={t('loan.account_growth_trend')}
                             data={loanTrend?.map(item => ({
                                 monthName: item.monthName,
                                 accountCount: item.accountCount
                             })) || []}
                             type="bar"
                             dataKeys={[
-                                { key: 'accountCount', name: 'Account Count', color: '#4caf50', type: 'number' }
+                                { key: 'accountCount', name: t('loan.account_count'), color: '#059669', type: 'number' }
                             ]}
                             showTrend={true}
                             showAverage={true}
@@ -282,14 +371,14 @@ const Loan: React.FC = () => {
                     {/* Average Loan Size Trend */}
                     <Grid size={{ xs: 12, md: 6 }}>
                         <TrendChart
-                            title="Average Loan Size Trend"
+                            title={t('loan.average_loan_size_trend')}
                             data={loanTrend?.map(item => ({
                                 monthName: item.monthName,
                                 averageLoanSize: item.averageLoanSize
                             })) || []}
                             type="line"
                             dataKeys={[
-                                { key: 'averageLoanSize', name: 'Average Loan Size', color: '#ff9800', type: 'currency' }
+                                { key: 'averageLoanSize', name: t('loan.average_loan_size'), color: 'secondary.main', type: 'currency' }
                             ]}
                             showTrend={true}
                             showAverage={true}
@@ -300,7 +389,7 @@ const Loan: React.FC = () => {
                     {/* Combined View - Outstanding vs Sanctioned */}
                     <Grid size={{ xs: 12 }}>
                         <TrendChart
-                            title="Outstanding vs Sanctioned Comparison"
+                            title={t('loan.outstanding_vs_sanctioned')}
                             data={loanTrend?.map(item => ({
                                 monthName: item.monthName,
                                 totalOutstanding: item.totalOutstanding,
@@ -308,8 +397,8 @@ const Loan: React.FC = () => {
                             })) || []}
                             type="composed"
                             dataKeys={[
-                                { key: 'totalOutstanding', name: 'Total Outstanding', color: '#f44336', type: 'currency' },
-                                { key: 'totalSanctioned', name: 'Total Sanctioned', color: '#9c27b0', type: 'currency' }
+                                { key: 'totalOutstanding', name: t('loan.total_outstanding'), color: '#DC2626', type: 'currency' },
+                                { key: 'totalSanctioned', name: t('loan.total_sanctioned'), color: '#7C3AED', type: 'currency' }
                             ]}
                             showTrend={true}
                             showAverage={true}
@@ -317,6 +406,88 @@ const Loan: React.FC = () => {
                         />
                     </Grid>
                 </Grid>
+
+                {/* Detailed Data Table */}
+                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                    <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 600, color: 'primary.main' }}>
+                        {t('loan.detailed_loan_analysis')}
+                    </Typography>
+                    <TableContainer sx={{ maxHeight: 500 }}>
+                        <Table stickyHeader size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('loan.branch')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('loan.scheme')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('loan.purpose')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('loan.segment')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">{t('loan.count')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">{t('loan.sanctioned')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">{t('loan.outstanding')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">{t('loan.overdue')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="right">{t('loan.avg_rate')}</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }} align="center">{t('loan.status')}</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredData.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={10} align="center" sx={{ py: 3 }}>
+                                            <Typography color="textSecondary">{t('common.no_data')}</Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    filteredData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+                                        <TableRow key={index} hover>
+                                            <TableCell>{row.branchCode || '-'}</TableCell>
+                                            <TableCell>{row.loanSchemeCode || '-'}</TableCell>
+                                            <TableCell>{row.purpose || '-'}</TableCell>
+                                            <TableCell>{row.segment || '-'}</TableCell>
+                                            <TableCell align="right">{row.loanCount?.toLocaleString()}</TableCell>
+                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#7C3AED' }}>
+                                                {formatCurrency(row.totalSanctionAmount)}
+                                            </TableCell>
+                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#DC2626' }}>
+                                                {formatCurrency(row.totalOutstanding)}
+                                            </TableCell>
+                                            <TableCell 
+                                                align="right" 
+                                                sx={{ 
+                                                    fontWeight: 600, 
+                                                    color: row.totalOverdueAmount ? '#d32f2f' : 'inherit'
+                                                }}
+                                            >
+                                                {formatCurrency(row.totalOverdueAmount)}
+                                            </TableCell>
+                                            <TableCell align="right" sx={{ fontWeight: 500 }}>
+                                                {formatPercentage(row.avgInterestRate)}
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                <Chip 
+                                                    label={row.accountStatus || t('common.unknown')} 
+                                                    color={getStatusColor(row.accountStatus)}
+                                                    size="small"
+                                                    sx={{ minWidth: 70 }}
+                                                />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[10, 25, 50, 100]}
+                        component="div"
+                        count={filteredData.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={(e, newPage) => setPage(newPage)}
+                        onRowsPerPageChange={(e) => {
+                            setRowsPerPage(parseInt(e.target.value, 10));
+                            setPage(0);
+                        }}
+                    />
+                </Paper>
             </Container>
         </Box>
     );

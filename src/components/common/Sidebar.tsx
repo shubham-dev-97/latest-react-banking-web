@@ -12,14 +12,24 @@ import {
     Assessment as SummaryIcon,
     Savings as SavingsIcon,
     AdminPanelSettings as AdminIcon,
-    ShowChart as GLIcon
+    ShowChart as GLIcon,
+     AccountTree as BranchIcon,
+     Analytics as KpiIcon 
 } from '@mui/icons-material';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { getAllowedPages, PAGES, getUserRole } from '../../utils/roleAccess';
+import { bankColors } from '../../styles/bankColors';
 
-const drawerWidth = 200;
+import { useTranslation } from '../../hooks/useTranslation';
+
+const drawerWidth = {
+    xs: 200,
+    sm: 200,
+    md: 240,
+    lg: 260
+};
 
 const Sidebar = ({ mobileOpen, onClose }: any) => {
     const navigate = useNavigate();
@@ -27,55 +37,54 @@ const Sidebar = ({ mobileOpen, onClose }: any) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const { user } = useAuth();
+     const { t } = useTranslation();
 
-    const [menuItems, setMenuItems] = useState<any[]>([]);
-
-    useEffect(() => {
-        if (!user) return;
+    const menuItems = React.useMemo(() => {
+        if (!user) return [];
 
         const role = getUserRole(user);
         const allowedPages = getAllowedPages(role);
 
-        console.log("👤 User:", user);
-        console.log("👤 Role extracted:", role);
-        console.log("📋 Allowed Pages:", allowedPages);
-
         const items: any[] = [];
 
-        // Add Admin for Chairman and ITAdmin
         if (allowedPages.includes(PAGES.ADMIN)) {
-            items.push({ text: 'Admin', icon: <AdminIcon />, path: PAGES.ADMIN });
+            items.push({ text: t('sidebar.admin', 'Admin'), icon: <AdminIcon />, path: PAGES.ADMIN });
         }
 
-        // Add other pages based on allowedPages
         if (allowedPages.includes(PAGES.HOME)) {
-            items.push({ text: 'CEO Dashboard', icon: <HomeIcon />, path: PAGES.HOME });
+            items.push({ text: t('sidebar.ceo_dashboard', 'CEO Dashboard'), icon: <HomeIcon />, path: PAGES.HOME });
         }
 
         if (allowedPages.includes(PAGES.DEPOSIT)) {
-            items.push({ text: 'Deposit', icon: <DepositIcon />, path: PAGES.DEPOSIT });
+            items.push({ text: t('sidebar.deposit', 'Deposit'), icon: <DepositIcon />, path: PAGES.DEPOSIT });
         }
 
         if (allowedPages.includes(PAGES.LOAN)) {
-            items.push({ text: 'Loan', icon: <LoanIcon />, path: PAGES.LOAN });
+            items.push({ text: t('sidebar.loan', 'Loan'), icon: <LoanIcon />, path: PAGES.LOAN });
         }
 
         if (allowedPages.includes(PAGES.SUMMARY)) {
-            items.push({ text: 'Summary', icon: <SummaryIcon />, path: PAGES.SUMMARY });
+            items.push({ text: t('sidebar.summary', 'Summary'), icon: <SummaryIcon />, path: PAGES.SUMMARY });
         }
 
         if (allowedPages.includes(PAGES.CASA)) {
-            items.push({ text: 'CASA Summary', icon: <SavingsIcon />, path: PAGES.CASA });
+            items.push({ text: t('sidebar.casa_summary', 'CASA Summary'), icon: <SavingsIcon />, path: PAGES.CASA });
         }
 
         if (allowedPages.includes(PAGES.GL)) {
-            items.push({ text: 'GL Dashboard', icon: <GLIcon />, path: PAGES.GL });
+            items.push({ text: t('sidebar.gl_dashboard', 'GL Dashboard'), icon: <GLIcon />, path: PAGES.GL });
         }
 
-        console.log("📋 Final menu items:", items);
-        setMenuItems(items);
+        if (allowedPages.includes(PAGES.BRANCH_PERFORMANCE)) {
+            items.push({ text: t('sidebar.branch_performance', 'Branch Performance'), icon: <BranchIcon />, path: PAGES.BRANCH_PERFORMANCE });
+        }
 
-    }, [user]);
+        if (allowedPages.includes(PAGES.BANK_KPI)) {
+            items.push({ text: t('sidebar.bank_kpi', 'Bank KPI'), icon: <KpiIcon/>, path: PAGES.BANK_KPI });
+        }
+
+        return items;
+    }, [user, t]);
 
     const handleNavigation = (path: string) => {
         navigate(path);
@@ -85,8 +94,8 @@ const Sidebar = ({ mobileOpen, onClose }: any) => {
     // Show loading if no menu items
     if (!user || menuItems.length === 0) {
         return (
-            <Box sx={{ width: drawerWidth, bgcolor: '#f5f5f5', height: '100%', p: 2 }}>
-                <Typography>Loading menu...</Typography>
+            <Box sx={{ width: drawerWidth, bgcolor: bankColors.sidebar.bg, height: '100%', p: 2 }}>
+                <Typography>{t('sidebar.loading_menu', 'Loading menu...')}</Typography>
             </Box>
         );
     }
@@ -100,57 +109,76 @@ const Sidebar = ({ mobileOpen, onClose }: any) => {
                 sx={{
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
-                        bgcolor: '#f5f5f5',
-                        borderRight: '1px solid #e0e0e0'
-                    }
+                        boxSizing: 'border-box',
+                        bgcolor: bankColors.sidebar.bg,
+                        borderRight: '1px solid #E2E8F0'
+                    },
                 }}
             >
-                <Toolbar>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
-                        Bank<span style={{ color: '#ff9800' }}>Dash</span>
+                <Toolbar sx={{ justifyContent: 'center', py: 2 }}>
+                    <Typography variant="h6" sx={{ fontWeight: '700', color: bankColors.header.bg }}>
+                        Bank<span style={{ color: bankColors.header.accent }}>Dash</span>
                     </Typography>
                 </Toolbar>
 
-                <Divider />
+                <Divider sx={{ borderColor: '#E2E8F0' }} />
 
-                <List>
-                    {menuItems.map((item) => (
-                        <ListItem
-                            button
-                            key={item.text}
-                            onClick={() => handleNavigation(item.path)}
-                            selected={location.pathname === item.path}
-                            sx={{
-                                '&.Mui-selected': {
-                                    backgroundColor: '#e3f2fd',
-                                    '& .MuiListItemIcon-root': {
-                                        color: '#1976d2',
+                <List sx={{ px: 2, pt: 2 }}>
+                    {menuItems.map((item) => {
+                        const isSelected = location.pathname === item.path;
+                        return (
+                            <ListItem
+                                button
+                                key={item.text}
+                                onClick={() => handleNavigation(item.path)}
+                                selected={isSelected}
+                                sx={{
+                                    mb: 1,
+                                    borderRadius: 2,
+                                    '&.Mui-selected': {
+                                        backgroundColor: bankColors.sidebar.selected,
+                                        '&:hover': {
+                                            backgroundColor: bankColors.sidebar.selected,
+                                        },
+                                        '& .MuiListItemIcon-root': {
+                                            color: bankColors.sidebar.selectedText,
+                                        },
+                                        '& .MuiListItemText-primary': {
+                                            color: bankColors.sidebar.selectedText,
+                                            fontWeight: '600',
+                                        },
                                     },
-                                    '& .MuiListItemText-primary': {
-                                        color: '#1976d2',
-                                        fontWeight: 'bold',
-                                    },
-                                },
-                            }}
-                        >
-                            <ListItemIcon sx={{ 
-                                color: location.pathname === item.path ? '#1976d2' : '#757575',
-                                minWidth: 40,
-                            }}>
-                                {item.icon}
-                            </ListItemIcon>
-                            <ListItemText primary={item.text} />
-                        </ListItem>
-                    ))}
+                                    '&:hover': {
+                                        backgroundColor: bankColors.sidebar.hover,
+                                    }
+                                }}
+                            >
+                                <ListItemIcon sx={{ 
+                                    color: isSelected ? bankColors.sidebar.selectedText : bankColors.sidebar.icon,
+                                    minWidth: 40,
+                                }}>
+                                    {item.icon}
+                                </ListItemIcon>
+                                <ListItemText 
+                                    primary={item.text} 
+                                    primaryTypographyProps={{ 
+                                        fontWeight: isSelected ? '600' : '500',
+                                        color: isSelected ? bankColors.sidebar.selectedText : 'text.primary',
+                                        fontSize: '0.9rem'
+                                    }} 
+                                />
+                            </ListItem>
+                        );
+                    })}
                 </List>
 
                 {user && (
                     <Box sx={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
-                        <Divider sx={{ mb: 2 }} />
-                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: '#666' }}>
+                        <Divider sx={{ mb: 2, borderColor: '#E2E8F0' }} />
+                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: 'text.secondary', fontWeight: '500' }}>
                             Logged in as: {user.roleName}
                         </Typography>
-                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: '#999' }}>
+                        <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', color: 'text.secondary', opacity: 0.8 }}>
                             {user.userName}
                         </Typography>
                     </Box>

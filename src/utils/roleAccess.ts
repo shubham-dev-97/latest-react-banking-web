@@ -6,6 +6,8 @@ export const PAGES = {
     SUMMARY: '/summary',
     CASA: '/casa',
     GL: '/gl-dashboard',
+    BRANCH_PERFORMANCE: '/branch-performance', 
+    BANK_KPI: '/bank-kpi',
 };
 export type PagePath = typeof PAGES[keyof typeof PAGES];
 
@@ -25,7 +27,10 @@ const roleAccessRules: Record<string, PagePath[]> = {
         PAGES.LOAN,
         PAGES.SUMMARY,
         PAGES.CASA,
-        PAGES.GL
+        PAGES.GL,
+        PAGES.BRANCH_PERFORMANCE,
+        PAGES.BANK_KPI
+
     ],
     'CEO': [
         PAGES.HOME,
@@ -33,7 +38,8 @@ const roleAccessRules: Record<string, PagePath[]> = {
         PAGES.LOAN,
         PAGES.SUMMARY,
         PAGES.CASA,
-        PAGES.GL
+        PAGES.GL,
+         PAGES.BRANCH_PERFORMANCE
     ],
     'GM': [
         PAGES.HOME,

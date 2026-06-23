@@ -136,6 +136,25 @@ export const useRbiDepositAuditDumpPaginated = (asOnDate: string, pageNumber: nu
         keepPreviousData: true,
     });
 };
+
+export const useRbiLoanAuditDumpPaginated = (asOnDate: string, pageNumber: number, pageSize: number) => {
+    return useQuery({
+        queryKey: ['rbiLoanAuditPaginated', asOnDate, pageNumber, pageSize],
+        queryFn: () => dashboardApi.getRbiLoanAuditDumpPaginated(asOnDate, pageNumber, pageSize),
+        enabled: !!asOnDate && asOnDate !== 'all',
+        staleTime: 5 * 60 * 1000,
+        keepPreviousData: true,
+    });
+};
+
+export const useHomeAggregatedData = (asOnDate: string) => {
+    return useQuery({
+        queryKey: ['homeAggregatedData', asOnDate],
+        queryFn: () => dashboardApi.getHomeAggregatedData(asOnDate),
+        enabled: !!asOnDate && asOnDate !== 'all',
+        staleTime: 5 * 60 * 1000,
+    });
+};
 // Combined hook for dashboard data
 export const useDashboardData = () => {
     const [branchCode, setBranchCode] = useState<string>('');
@@ -149,10 +168,18 @@ export const useDashboardData = () => {
     const { data: depositData, isLoading: depositLoading } = useDepositAnalysis({ branchCode, year });
     const { data: loanData, isLoading: loanLoading } = useLoanAnalysis({ branchCode, year });
     const { data: monthlyTrend, isLoading: trendLoading } = useMonthlyTrend({ year });
+
     const { data: customerSummary, isLoading: customerSummaryLoading } = useHomeCustomerSummary(selectedDate);
     const { data: depositOpening, isLoading: depositOpeningLoading } = useDepositOpeningSummary(selectedDate !== 'all' ? selectedDate : '');
     const { data: npaSummary, isLoading: npaLoading } = useNPASummary(selectedDate !== 'all' ? selectedDate : '');
     const { data: hcData, isLoading: hcLoading } = useHCDistribution(selectedDate !== 'all' ? selectedDate : '');
+    const { data: portfolioOverview, isLoading: portfolioLoading } = usePortfolioOverview(selectedDate !== 'all' ? selectedDate : '');
+    const { data: interestAndOverdueKPI, isLoading: interestKpiLoading } = useInterestAndOverdueKPI(selectedDate !== 'all' ? selectedDate : '');
+    const { data: almBucketRBI, isLoading: almLoading } = useAlmBucketRBI(selectedDate !== 'all' ? selectedDate : '');
+    const { data: depLoanMonthlyTrend, isLoading: depLoanTrendLoading } = useDepLoanMonthlyTrendWithCDRatio(selectedDate !== 'all' ? selectedDate : '');
+
+    const aggregatedData = undefined;
+    const aggregatedLoading = false;
 
     // Set first available date as default when dates load
     useEffect(() => {
@@ -199,5 +226,15 @@ export const useDashboardData = () => {
         npaLoading,
         hcData,
         hcLoading,
+        portfolioOverview,
+        portfolioLoading,
+        interestAndOverdueKPI,
+        interestKpiLoading,
+        almBucketRBI,
+        almLoading,
+        depLoanMonthlyTrend,
+        depLoanTrendLoading,
+        aggregatedData,
+        aggregatedLoading,
     };
 };

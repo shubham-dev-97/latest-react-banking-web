@@ -5,10 +5,9 @@ import {
     BranchAccessRequest, RegionAccessRequest
 } from '../types/admin';
 
-// const API_BASE_URL = 'https://localhost:7009/api/admin';
+const API_BASE_URL = 'http://localhost:5142/api/admin';
 
-
-const API_BASE_URL = 'https://nerofinsbankapi.azurewebsites.net/api/admin';
+// const API_BASE_URL = 'https://nerofinsbankapi.azurewebsites.net/api/admin';
 
 
 const api = axios.create({

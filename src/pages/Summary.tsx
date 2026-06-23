@@ -19,6 +19,7 @@ import {
 } from 'recharts';
 import StyledCard from '../components/common/StyledCard';
 import { useCurrency } from '../contexts/CurrencyContext';
+import { useTranslation } from '../hooks/useTranslation';
 
 // Define types for the pie chart data
 interface PieDataItem {
@@ -48,6 +49,7 @@ const Summary: React.FC = () => {
     } = useSharedData();
     
     const { formatCurrency, formatNumber } = useCurrency();
+    const { t } = useTranslation();
 
     // Filter summary data by branch
     const filteredSummary = useMemo(() => {
@@ -91,18 +93,18 @@ const Summary: React.FC = () => {
 
     // Prepare data for bar chart
     const barData: BarDataItem[] = filteredSummary.map(item => ({
-        name: item.branchCode || 'All',
+        name: item.branchCode || t('summary.all', 'All'),
         Loans: item.totalLoanAmount || 0,
         Deposits: item.totalDepositAmount || 0,
     }));
 
     // Prepare data for pie chart
     const pieData: PieDataItem[] = [
-        { name: 'Total Loans', value: totals.totalLoanAmount || 0 },
-        { name: 'Total Deposits', value: totals.totalDepositAmount || 0 },
+        { name: t('summary.total_loans', 'Total Loans'), value: totals.totalLoanAmount || 0 },
+        { name: t('summary.total_deposits', 'Total Deposits'), value: totals.totalDepositAmount || 0 },
     ];
 
-    const COLORS = ['#f44336', '#4caf50', '#ff9800', '#1976d2'];
+    const COLORS = ['#DC2626', '#059669', 'secondary.main', '#2563EB'];
 
     // Custom label for pie chart
     const renderCustomizedLabel = (props: any) => {
@@ -133,7 +135,7 @@ const Summary: React.FC = () => {
     if (summaryLoading || datesLoading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Typography>Loading summary data...</Typography>
+                <Typography>{t('common.loading', 'Loading...')}</Typography>
             </Box>
         );
     }
@@ -147,14 +149,14 @@ const Summary: React.FC = () => {
                         {/* As On Date Dropdown */}
                         <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl fullWidth size="small">
-                                <InputLabel>As On Date</InputLabel>
+                                <InputLabel>{t('home.as_on_date', 'As On Date')}</InputLabel>
                                 <Select
                                     value={selectedDate}
-                                    label="As On Date"
+                                    label={t('home.as_on_date', 'As On Date')}
                                     onChange={(e) => setSelectedDate(e.target.value)}
                                 >
                                     {datesLoading ? (
-                                        <MenuItem disabled>Loading dates...</MenuItem>
+                                        <MenuItem disabled>{t('common.loading', 'Loading...')}</MenuItem>
                                     ) : availableDates?.map((date) => (
                                         <MenuItem key={date} value={date}>
                                             {date}
@@ -171,7 +173,7 @@ const Summary: React.FC = () => {
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Loan Accounts"
+                            title={t('dashboard.total_loan_accounts', 'Total Loan Accounts')}
                             value={totals.totalLoanAccounts?.toLocaleString() || '0'}
                             icon={<AccountBalance />}
                             colorIndex={4}
@@ -179,7 +181,7 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Loan Amount"
+                            title={t('dashboard.total_loan_amount', 'Total Loan Amount')}
                             value={formatCurrency(totals.totalLoanAmount)}
                             icon={<AttachMoney />}
                             colorIndex={1}
@@ -187,7 +189,7 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Deposit Accounts"
+                            title={t('dashboard.total_deposit_accounts', 'Total Deposit Accounts')}
                             value={totals.totalDepositAccounts?.toLocaleString() || '0'}
                             icon={<Savings />}
                             colorIndex={2}
@@ -195,7 +197,7 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Deposit Amount"
+                            title={t('dashboard.total_deposit_amount', 'Total Deposit Amount')}
                             value={formatCurrency(totals.totalDepositAmount)}
                             icon={<AttachMoney />}
                             colorIndex={3}
@@ -207,16 +209,16 @@ const Summary: React.FC = () => {
                 <Grid container spacing={2} sx={{ mb: 4 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Total Accounts"
+                            title={t('dashboard.total_accounts', 'Total Accounts')}
                             value={totalAccounts.toLocaleString()}
-                            subtitle="All accounts combined"
+                            subtitle={t('summary.all_accounts_combined', 'All accounts combined')}
                             icon={<Assessment />}
                             colorIndex={0}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Avg Loan Size"
+                            title={t('dashboard.avg_loan_size', 'Avg Loan Size')}
                             value={formatCurrency(avgLoanSize)}
                             icon={<TrendingUp />}
                             colorIndex={4}
@@ -224,7 +226,7 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="Avg Deposit Size"
+                            title={t('dashboard.avg_deposit_size', 'Avg Deposit Size')}
                             value={formatCurrency(avgDepositSize)}
                             icon={<TrendingDown />}
                             colorIndex={2}
@@ -232,9 +234,9 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <StyledCard
-                            title="L/D Ratio"
+                            title={t('dashboard.ld_ratio', 'L/D Ratio')}
                             value={`${loanDepositRatio.toFixed(1)}%`}
-                            subtitle="Loans vs Deposits"
+                            subtitle={t('summary.loans_vs_deposits', 'Loans vs Deposits')}
                             icon={<PieChartIcon />}
                             colorIndex={5}
                         />
@@ -245,13 +247,13 @@ const Summary: React.FC = () => {
                 <Grid container spacing={2} sx={{ mb: 4 }}>
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, height: '100%', minHeight: 350 }}>
-                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a237e' }}>
-                                Loan vs Deposit Distribution
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                                {t('summary.loan_vs_deposit_distribution', 'Loan vs Deposit Distribution')}
                             </Typography>
                             <Box sx={{ height: 280, display: 'flex', justifyContent: 'center' }}>
                                 {pieData[0].value === 0 && pieData[1].value === 0 ? (
                                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Typography color="textSecondary">No data available</Typography>
+                                        <Typography color="textSecondary">{t('common.no_data', 'No data available')}</Typography>
                                     </Box>
                                 ) : (
                                     <ResponsiveContainer width="100%" height="100%">
@@ -279,13 +281,13 @@ const Summary: React.FC = () => {
                     </Grid>
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Paper sx={{ p: 2, height: '100%', minHeight: 350 }}>
-                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a237e' }}>
-                                Branch Comparison
+                            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                                {t('summary.branch_comparison', 'Branch Comparison')}
                             </Typography>
                             <Box sx={{ height: 280 }}>
                                 {barData.length === 0 ? (
                                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                                        <Typography color="textSecondary">No data available</Typography>
+                                        <Typography color="textSecondary">{t('common.no_data', 'No data available')}</Typography>
                                     </Box>
                                 ) : (
                                     <ResponsiveContainer width="100%" height="100%">
@@ -295,8 +297,8 @@ const Summary: React.FC = () => {
                                             <YAxis tickFormatter={formatYAxis} />
                                             <Tooltip formatter={formatTooltipValue} />
                                             <Legend />
-                                            <Bar dataKey="Deposits" fill="#4caf50" />
-                                            <Bar dataKey="Loans" fill="#f44336" />
+                                            <Bar dataKey="Deposits" fill="#059669" />
+                                            <Bar dataKey="Loans" fill="#DC2626" />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 )}
@@ -307,45 +309,45 @@ const Summary: React.FC = () => {
 
                 {/* Summary Table */}
                 <Paper sx={{ width: '100%', overflow: 'hidden', mb: 3 }}>
-                    <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 600, color: '#1a237e' }}>
-                        Detailed Branch Summary
+                    <Typography variant="h6" sx={{ p: 2, pb: 0, fontWeight: 600, color: 'primary.main' }}>
+                        {t('summary.detailed_branch_summary', 'Detailed Branch Summary')}
                     </Typography>
                     <TableContainer sx={{ maxHeight: 400 }}>
                         <Table stickyHeader size="small">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Branch Code</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Loan Accounts</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Loan Amount</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Deposit Accounts</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Deposit Amount</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>Net Position</TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>L/D Ratio</TableCell>
+                                    <TableCell sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('summary.branch_code', 'Branch Code')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('summary.loan_accounts', 'Loan Accounts')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('summary.loan_amount', 'Loan Amount')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('summary.deposit_accounts', 'Deposit Accounts')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('summary.deposit_amount', 'Deposit Amount')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('gl.net_position', 'Net Position')}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#f5f5f5' }}>{t('dashboard.ld_ratio', 'L/D Ratio')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {filteredSummary.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                                            <Typography color="textSecondary">No data available</Typography>
+                                            <Typography color="textSecondary">{t('common.no_data', 'No data available')}</Typography>
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     filteredSummary.map((row, index) => (
                                         <TableRow key={index} hover>
-                                            <TableCell>{row.branchCode || 'All Branches'}</TableCell>
+                                            <TableCell>{row.branchCode || t('summary.all_branches', 'All Branches')}</TableCell>
                                             <TableCell align="right">{row.totalLoanAccounts?.toLocaleString() || '0'}</TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#f44336' }}>
+                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#DC2626' }}>
                                                 {formatCurrency(row.totalLoanAmount)}
                                             </TableCell>
                                             <TableCell align="right">{row.totalDepositAccounts?.toLocaleString() || '0'}</TableCell>
-                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#4caf50' }}>
+                                            <TableCell align="right" sx={{ fontWeight: 500, color: '#059669' }}>
                                                 {formatCurrency(row.totalDepositAmount)}
                                             </TableCell>
                                             <TableCell 
                                                 align="right" 
                                                 sx={{ 
-                                                    color: (row.netPosition || 0) >= 0 ? '#4caf50' : '#f44336',
+                                                    color: (row.netPosition || 0) >= 0 ? '#059669' : '#DC2626',
                                                     fontWeight: 600
                                                 }}
                                             >
@@ -369,17 +371,17 @@ const Summary: React.FC = () => {
 
                 {/* Net Position Summary */}
                 <Paper sx={{ p: 2 }}>
-                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a237e' }}>
-                        Overall Net Position
+                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                        {t('summary.overall_net_position', 'Overall Net Position')}
                     </Typography>
                     <Grid container spacing={2}>
                         <Grid size={{ xs: 12, md: 4 }}>
                             <Card sx={{ bgcolor: '#ffebee' }}>
                                 <CardContent>
                                     <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        Total Loans
+                                        {t('summary.total_loans', 'Total Loans')}
                                     </Typography>
-                                    <Typography variant="h6" sx={{ color: '#f44336', fontWeight: 'bold' }}>
+                                    <Typography variant="h6" sx={{ color: '#DC2626', fontWeight: 'bold' }}>
                                         {formatCurrency(totals.totalLoanAmount)}
                                     </Typography>
                                 </CardContent>
@@ -389,9 +391,9 @@ const Summary: React.FC = () => {
                             <Card sx={{ bgcolor: '#e8f5e8' }}>
                                 <CardContent>
                                     <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        Total Deposits
+                                        {t('summary.total_deposits', 'Total Deposits')}
                                     </Typography>
-                                    <Typography variant="h6" sx={{ color: '#4caf50', fontWeight: 'bold' }}>
+                                    <Typography variant="h6" sx={{ color: '#059669', fontWeight: 'bold' }}>
                                         {formatCurrency(totals.totalDepositAmount)}
                                     </Typography>
                                 </CardContent>
@@ -403,12 +405,12 @@ const Summary: React.FC = () => {
                             }}>
                                 <CardContent>
                                     <Typography variant="subtitle2" color="textSecondary" gutterBottom>
-                                        Net Position
+                                        {t('gl.net_position', 'Net Position')}
                                     </Typography>
                                     <Typography 
                                         variant="h6" 
                                         sx={{ 
-                                            color: (totals.netPosition || 0) >= 0 ? '#4caf50' : '#f44336',
+                                            color: (totals.netPosition || 0) >= 0 ? '#059669' : '#DC2626',
                                             fontWeight: 'bold'
                                         }}
                                     >
@@ -425,3 +427,4 @@ const Summary: React.FC = () => {
 };
 
 export default Summary;
+    

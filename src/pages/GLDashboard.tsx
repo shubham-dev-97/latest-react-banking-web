@@ -14,16 +14,18 @@ import {
 import { useGLDashboardSummary } from '../hooks/useGLData';
 import { useAvailableDates } from '../hooks/useCustomerData';
 import { useCurrency } from '../contexts/CurrencyContext';
-import { formatPercentage } from '../utils/formatters';
+import { formatPercentage, formatDateToDDMMYYYY } from '../utils/formatters';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
     Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
 import StyledCard from '../components/common/StyledCard';
+import { useTranslation } from '../hooks/useTranslation';
 
 const GLDashboard: React.FC = () => {
     const theme = useTheme();
     const { formatCurrency } = useCurrency();
+    const { t } = useTranslation();
     
     // Set default date to today's date or a recent fixed date
     const today = new Date();
@@ -55,16 +57,16 @@ const GLDashboard: React.FC = () => {
 
     // Data for pie chart
     const pieData = [
-        { name: 'Assets', value: glData?.total_Assets || 0 },
-        { name: 'Liabilities', value: glData?.total_Liabilities || 0 },
+        { name: t('gl.assets', 'Assets'), value: glData?.total_Assets || 0 },
+        { name: t('gl.liabilities', 'Liabilities'), value: glData?.total_Liabilities || 0 },
     ];
 
-    const COLORS = ['#1976d2', '#f44336', '#ff9800', '#4caf50', '#9c27b0'];
+    const COLORS = ['#2563EB', '#DC2626', 'secondary.main', '#059669', '#7C3AED'];
 
     // Data for bar chart (Income vs Expense)
     const barData = [
-        { name: 'Income', amount: glData?.total_Income || 0 },
-        { name: 'Expense', amount: glData?.total_Expense || 0 },
+        { name: t('gl.income', 'Income'), amount: glData?.total_Income || 0 },
+        { name: t('gl.expense', 'Expense'), amount: glData?.total_Expense || 0 },
     ];
 
     return (
@@ -75,17 +77,17 @@ const GLDashboard: React.FC = () => {
                     <Grid container spacing={2} alignItems="center">
                         <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl fullWidth size="small">
-                                <InputLabel>As On Date</InputLabel>
+                                <InputLabel>{t('home.as_on_date', 'As On Date')}</InputLabel>
                                 <Select
                                     value={selectedDate}
-                                    label="As On Date"
+                                    label={t('home.as_on_date', 'As On Date')}
                                     onChange={(e) => setSelectedDate(e.target.value)}
                                 >
                                     {datesLoading ? (
-                                        <MenuItem disabled>Loading dates...</MenuItem>
+                                        <MenuItem disabled>{t('common.loading', 'Loading...')}</MenuItem>
                                     ) : availableDates?.map((date) => (
                                         <MenuItem key={date} value={date}>
-                                            {date}
+                                            {formatDateToDDMMYYYY(date)}
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -96,7 +98,7 @@ const GLDashboard: React.FC = () => {
 
                 {isLoading ? (
                     <Paper sx={{ p: 4, textAlign: 'center' }}>
-                        <Typography>Loading GL data...</Typography>
+                        <Typography>{t('common.loading', 'Loading...')}</Typography>
                     </Paper>
                 ) : glData ? (
                     <>
@@ -104,7 +106,7 @@ const GLDashboard: React.FC = () => {
                         <Grid container spacing={2} sx={{ mb: 4 }}>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Assets"
+                                    title={t('gl.total_assets', 'Total Assets')}
                                     value={formatCurrency(glData.total_Assets)}
                                     icon={<AccountBalance />}
                                     colorIndex={2} // Blue
@@ -112,7 +114,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Liabilities"
+                                    title={t('gl.total_liabilities', 'Total Liabilities')}
                                     value={formatCurrency(glData.total_Liabilities)}
                                     icon={<TrendingDown />}
                                     colorIndex={1} // Red
@@ -120,7 +122,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Net Position"
+                                    title={t('gl.net_position', 'Net Position')}
                                     value={formatCurrency(glData.net_Position)}
                                     icon={<AccountBalanceWallet />}
                                     colorIndex={3} // Green
@@ -128,7 +130,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Net Profit"
+                                    title={t('gl.net_profit', 'Net Profit')}
                                     value={formatCurrency(glData.net_Profit)}
                                     icon={<TrendingUp />}
                                     colorIndex={0} // Purple
@@ -140,7 +142,7 @@ const GLDashboard: React.FC = () => {
                         <Grid container spacing={2} sx={{ mb: 4 }}>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Income"
+                                    title={t('gl.total_income', 'Total Income')}
                                     value={formatCurrency(glData.total_Income)}
                                     icon={<AttachMoney />}
                                     colorIndex={3} // Green
@@ -148,7 +150,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Expense"
+                                    title={t('gl.total_expense', 'Total Expense')}
                                     value={formatCurrency(glData.total_Expense)}
                                     icon={<Receipt />}
                                     colorIndex={1} // Red
@@ -156,7 +158,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Debit"
+                                    title={t('gl.total_debit', 'Total Debit')}
                                     value={formatCurrency(glData.total_Debit)}
                                     icon={<Assessment />}
                                     colorIndex={2} // Blue
@@ -164,7 +166,7 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                                 <StyledCard
-                                    title="Total Credit"
+                                    title={t('gl.total_credit', 'Total Credit')}
                                     value={formatCurrency(glData.total_Credit)}
                                     icon={<Savings />}
                                     colorIndex={4} // Orange
@@ -177,8 +179,8 @@ const GLDashboard: React.FC = () => {
                             {/* Pie Chart */}
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Paper sx={{ p: 2, height: '100%', minHeight: 350 }}>
-                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a237e' }}>
-                                        <ShowChart sx={{ mr: 1, verticalAlign: 'middle' }} /> Assets vs Liabilities
+                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                                        <ShowChart sx={{ mr: 1, verticalAlign: 'middle' }} /> {t('gl.assets_vs_liabilities', 'Assets vs Liabilities')}
                                     </Typography>
                                     <Box sx={{ height: 280, display: 'flex', justifyContent: 'center' }}>
                                         <ResponsiveContainer width="100%" height="100%">
@@ -206,8 +208,8 @@ const GLDashboard: React.FC = () => {
                             {/* Bar Chart */}
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Paper sx={{ p: 2, height: '100%', minHeight: 350 }}>
-                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a237e' }}>
-                                        <ShowChart sx={{ mr: 1, verticalAlign: 'middle' }} /> Income vs Expense
+                                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: 'primary.main' }}>
+                                        <ShowChart sx={{ mr: 1, verticalAlign: 'middle' }} /> {t('gl.income_vs_expense', 'Income vs Expense')}
                                     </Typography>
                                     <Box sx={{ height: 280 }}>
                                         <ResponsiveContainer width="100%" height="100%">
@@ -217,7 +219,7 @@ const GLDashboard: React.FC = () => {
                                                 <YAxis />
                                                 <Tooltip formatter={(value) => formatCurrency(value as number)} />
                                                 <Legend />
-                                                <Bar dataKey="amount" fill="#1976d2" />
+                                                <Bar dataKey="amount" fill="#2563EB" />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     </Box>
@@ -230,42 +232,42 @@ const GLDashboard: React.FC = () => {
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Card sx={{ height: '100%' }}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a237e', mb: 2 }}>
-                                            Income & Expense
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 2 }}>
+                                            {t('gl.income_and_expense', 'Income & Expense')}
                                         </Typography>
                                         <Divider sx={{ mb: 2 }} />
                                         <Grid container spacing={2}>
                                             <Grid item xs={6}>
                                                 <Typography color="textSecondary" gutterBottom variant="body2">
-                                                    Total Income
+                                                    {t('gl.total_income', 'Total Income')}
                                                 </Typography>
-                                                <Typography variant="h6" sx={{ color: '#4caf50', fontWeight: 600 }}>
+                                                <Typography variant="h6" sx={{ color: '#059669', fontWeight: 600 }}>
                                                     {formatCurrency(glData.total_Income)}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={6}>
                                                 <Typography color="textSecondary" gutterBottom variant="body2">
-                                                    Total Expense
+                                                    {t('gl.total_expense', 'Total Expense')}
                                                 </Typography>
-                                                <Typography variant="h6" sx={{ color: '#f44336', fontWeight: 600 }}>
+                                                <Typography variant="h6" sx={{ color: '#DC2626', fontWeight: 600 }}>
                                                     {formatCurrency(glData.total_Expense)}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Divider />
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                                                    <Typography variant="subtitle1" fontWeight="600">Net Profit</Typography>
+                                                    <Typography variant="subtitle1" fontWeight="600">{t('gl.net_profit', 'Net Profit')}</Typography>
                                                     <Typography variant="h6" sx={{ 
-                                                        color: glData.net_Profit >= 0 ? '#4caf50' : '#f44336',
+                                                        color: glData.net_Profit >= 0 ? '#059669' : '#DC2626',
                                                         fontWeight: 600 
                                                     }}>
                                                         {formatCurrency(glData.net_Profit)}
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                                                    <Typography variant="subtitle2" fontWeight="500">Profit Margin</Typography>
+                                                    <Typography variant="subtitle2" fontWeight="500">{t('gl.profit_margin', 'Profit Margin')}</Typography>
                                                     <Typography variant="subtitle2" sx={{ 
-                                                        color: parseFloat(profitMargin) >= 0 ? '#4caf50' : '#f44336',
+                                                        color: parseFloat(profitMargin) >= 0 ? '#059669' : '#DC2626',
                                                         fontWeight: 600
                                                     }}>
                                                         {profitMargin}%
@@ -279,33 +281,33 @@ const GLDashboard: React.FC = () => {
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Card sx={{ height: '100%' }}>
                                     <CardContent>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a237e', mb: 2 }}>
-                                            Debit & Credit Summary
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 2 }}>
+                                            {t('gl.debit_credit_summary', 'Debit & Credit Summary')}
                                         </Typography>
                                         <Divider sx={{ mb: 2 }} />
                                         <Grid container spacing={2}>
                                             <Grid item xs={6}>
                                                 <Typography color="textSecondary" gutterBottom variant="body2">
-                                                    Total Debit
+                                                    {t('gl.total_debit', 'Total Debit')}
                                                 </Typography>
-                                                <Typography variant="h6" sx={{ color: '#1976d2', fontWeight: 600 }}>
+                                                <Typography variant="h6" sx={{ color: '#2563EB', fontWeight: 600 }}>
                                                     {formatCurrency(glData.total_Debit)}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={6}>
                                                 <Typography color="textSecondary" gutterBottom variant="body2">
-                                                    Total Credit
+                                                    {t('gl.total_credit', 'Total Credit')}
                                                 </Typography>
-                                                <Typography variant="h6" sx={{ color: '#ff9800', fontWeight: 600 }}>
+                                                <Typography variant="h6" sx={{ color: 'secondary.main', fontWeight: 600 }}>
                                                     {formatCurrency(glData.total_Credit)}
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Divider />
                                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                                                    <Typography variant="subtitle1" fontWeight="600">Balance (Debit - Credit)</Typography>
+                                                    <Typography variant="subtitle1" fontWeight="600">{t('gl.balance_debit_credit', 'Balance (Debit - Credit)')}</Typography>
                                                     <Typography variant="h6" sx={{ 
-                                                        color: (glData.total_Debit - glData.total_Credit) >= 0 ? '#4caf50' : '#f44336',
+                                                        color: (glData.total_Debit - glData.total_Credit) >= 0 ? '#059669' : '#DC2626',
                                                         fontWeight: 600
                                                     }}>
                                                         {formatCurrency(glData.total_Debit - glData.total_Credit)}
@@ -322,32 +324,32 @@ const GLDashboard: React.FC = () => {
                         <Grid container spacing={2}>
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Paper sx={{ p: 2 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a237e', mb: 2 }}>
-                                        Asset & Liability Details
+                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 2 }}>
+                                        {t('gl.asset_liability_details', 'Asset & Liability Details')}
                                     </Typography>
                                     <Box sx={{ overflowX: 'auto' }}>
                                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                             <tbody>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Assets</td>
-                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#1976d2' }}>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.assets', 'Assets')}</td>
+                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#2563EB' }}>
                                                         {formatCurrency(glData.total_Assets)}
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Liabilities</td>
-                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#f44336' }}>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.liabilities', 'Liabilities')}</td>
+                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#DC2626' }}>
                                                         {formatCurrency(glData.total_Liabilities)}
                                                     </td>
                                                 </tr>
                                                 <tr style={{ backgroundColor: '#f5f5f5' }}>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Net Position</td>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.net_position', 'Net Position')}</td>
                                                     <td style={{ padding: '8px', textAlign: 'right', fontWeight: 600, color: '#2e7d32' }}>
                                                         {formatCurrency(glData.net_Position)}
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Asset/Liability Ratio</td>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.asset_liability_ratio', 'Asset/Liability Ratio')}</td>
                                                     <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500 }}>
                                                         {assetLiabilityRatio}
                                                     </td>
@@ -359,32 +361,32 @@ const GLDashboard: React.FC = () => {
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
                                 <Paper sx={{ p: 2 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#1a237e', mb: 2 }}>
-                                        Income & Expense Details
+                                    <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 2 }}>
+                                        {t('gl.income_expense_details', 'Income & Expense Details')}
                                     </Typography>
                                     <Box sx={{ overflowX: 'auto' }}>
                                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                             <tbody>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Income</td>
-                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#4caf50' }}>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.income', 'Income')}</td>
+                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#059669' }}>
                                                         {formatCurrency(glData.total_Income)}
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Expense</td>
-                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#f44336' }}>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.expense', 'Expense')}</td>
+                                                    <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500, color: '#DC2626' }}>
                                                         {formatCurrency(glData.total_Expense)}
                                                     </td>
                                                 </tr>
                                                 <tr style={{ backgroundColor: '#f5f5f5' }}>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Net Profit</td>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.net_profit', 'Net Profit')}</td>
                                                     <td style={{ padding: '8px', textAlign: 'right', fontWeight: 600, color: '#2e7d32' }}>
                                                         {formatCurrency(glData.net_Profit)}
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>Profit Margin</td>
+                                                    <td style={{ padding: '8px', fontWeight: 'bold' }}>{t('gl.profit_margin', 'Profit Margin')}</td>
                                                     <td style={{ padding: '8px', textAlign: 'right', fontWeight: 500 }}>
                                                         {profitMargin}%
                                                     </td>
@@ -398,7 +400,7 @@ const GLDashboard: React.FC = () => {
                     </>
                 ) : (
                     <Paper sx={{ p: 4, textAlign: 'center' }}>
-                        <Typography color="textSecondary">No data available for selected date.</Typography>
+                        <Typography color="textSecondary">{t('common.no_data', 'No data available for selected date.')}</Typography>
                     </Paper>
                 )}
             </Container>

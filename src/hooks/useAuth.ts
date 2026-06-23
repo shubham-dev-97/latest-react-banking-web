@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// interface LoginResponse {
-//     success: boolean;
-//     message: string;
-//     token?: string;
-//     user?: any;
-// }
-
-
 interface User {
     userID: number;
     userLoginID: string;
@@ -27,9 +19,10 @@ interface LoginResponse {
     expiration?: string;
     user?: User;
 }
+
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
 
     // Load user from localStorage on mount
     useEffect(() => {
@@ -47,6 +40,8 @@ export const useAuth = () => {
                 setUser(userData);
             } catch (e) {
                 console.error('Failed to parse user from localStorage:', e);
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('user');
             }
         } else {
             console.log('🔍 No user found in localStorage');
@@ -57,8 +52,21 @@ export const useAuth = () => {
         setIsLoading(true);
         try {
             console.log('🔍 login attempt for:', username);
+
+
+              // const response = await fetch('https://nerofinsbankapi.azurewebsites.net/api/Auth/login', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         userLoginID: username,
+            //         password: password
+            //     })
+            // });
+
             
-            const response = await fetch('https://nerofinsbankapi.azurewebsites.net/api/Auth/login', {
+            const response = await fetch('http://localhost:5142/api/Auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -74,20 +82,34 @@ export const useAuth = () => {
 
             if (response.ok && data.success) {
                 // Store in localStorage
-                localStorage.setItem('authToken', data.token);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token);
+                }
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    setUser(data.user);
+                }
                 
-                // Update state
-                setUser(data.user);
                 console.log('🔍 user state updated:', data.user);
                 
-                return { success: true, message: 'Login successful', token: data.token, user: data.user };
+                return { 
+                    success: true, 
+                    message: 'Login successful', 
+                    token: data.token, 
+                    user: data.user 
+                };
             } else {
-                return { success: false, message: data.message || 'Login failed' };
+                return { 
+                    success: false, 
+                    message: data.message || 'Invalid username or password' 
+                };
             }
         } catch (error: any) {
             console.error('Login error:', error);
-            return { success: false, message: 'Network error. Please try again.' };
+            return { 
+                success: false, 
+                message: 'Network error. Please try again.' 
+            };
         } finally {
             setIsLoading(false);
         }
@@ -100,7 +122,7 @@ export const useAuth = () => {
         console.log('🔍 logged out, user set to null');
     };
   
-    const checkAuth = () => {
+    const checkAuth = (): boolean => {
         const token = localStorage.getItem('authToken');
         const userStr = localStorage.getItem('user');
         if (token && userStr) {

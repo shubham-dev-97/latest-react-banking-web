@@ -14,6 +14,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface DepLoanMonthlyTrend {
     montH_END?: string;      // API returns with capital H
@@ -58,6 +59,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = false }) => {
+    const { t } = useTranslation();
     const [chartType, setChartType] = useState<'composed' | 'area'>('composed');
 
     // Normalize and filter data - remove months with zero deposit balance for meaningful analysis
@@ -130,7 +132,7 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
         return (
             <Paper sx={{ p: 5, textAlign: 'center', borderRadius: 3 }}>
                 <CircularProgress />
-                <Typography sx={{ mt: 2 }}>Loading Deposit-Loan trend data...</Typography>
+                <Typography sx={{ mt: 2 }}>{t('common.loading')}</Typography>
             </Paper>
         );
     }
@@ -138,7 +140,7 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
     if (!normalizedData || normalizedData.length === 0) {
         return (
             <Paper sx={{ p: 5, textAlign: 'center', borderRadius: 3 }}>
-                <Typography color="error">No data available for the selected date.</Typography>
+                <Typography color="error">{t('common.no_data')}</Typography>
             </Paper>
         );
     }
@@ -175,12 +177,12 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
                 <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 30 }}>
                     <defs>
                         <linearGradient id="depositGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#1976D2" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#1976D2" stopOpacity={0.1}/>
+                            <stop offset="5%" stopColor="#2563EB" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#2563EB" stopOpacity={0.1}/>
                         </linearGradient>
                         <linearGradient id="loanGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#F44336" stopOpacity={0.8}/>
-                            <stop offset="95%" stopColor="#F44336" stopOpacity={0.1}/>
+                            <stop offset="5%" stopColor="#DC2626" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#DC2626" stopOpacity={0.1}/>
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -196,9 +198,9 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
                     <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} />
                     <RechartsTooltip content={<CustomTooltip />} />
                     <Legend />
-                    <Area yAxisId="left" type="monotone" dataKey="deposit" name="Deposit Balance" stroke="#1976D2" fill="url(#depositGradient)" />
-                    <Area yAxisId="left" type="monotone" dataKey="loan" name="Loan Balance" stroke="#F44336" fill="url(#loanGradient)" />
-                    <Line yAxisId="right" type="monotone" dataKey="cdRatio" name="CD Ratio %" stroke="#FFA000" strokeWidth={3} dot={{ r: 5 }} />
+                    <Area yAxisId="left" type="monotone" dataKey="deposit" name="Deposit Balance" stroke="#2563EB" fill="url(#depositGradient)" />
+                    <Area yAxisId="left" type="monotone" dataKey="loan" name="Loan Balance" stroke="#DC2626" fill="url(#loanGradient)" />
+                    <Line yAxisId="right" type="monotone" dataKey="cdRatio" name="CD Ratio %" stroke="#D97706" strokeWidth={3} dot={{ r: 5 }} />
                 </AreaChart>
             );
         }
@@ -219,9 +221,9 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
                 <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} />
                 <RechartsTooltip content={<CustomTooltip />} />
                 <Legend />
-                <Bar yAxisId="left" dataKey="deposit" name="Deposit Balance" fill="#1976D2" radius={[8, 8, 0, 0]} barSize={40} />
-                <Bar yAxisId="left" dataKey="loan" name="Loan Balance" fill="#F44336" radius={[8, 8, 0, 0]} barSize={40} />
-                <Line yAxisId="right" type="monotone" dataKey="cdRatio" name="CD Ratio %" stroke="#FFA000" strokeWidth={3} dot={{ r: 5, fill: '#FFA000' }} />
+                <Bar yAxisId="left" dataKey="deposit" name="Deposit Balance" fill="#2563EB" radius={[8, 8, 0, 0]} barSize={40} />
+                <Bar yAxisId="left" dataKey="loan" name="Loan Balance" fill="#DC2626" radius={[8, 8, 0, 0]} barSize={40} />
+                <Line yAxisId="right" type="monotone" dataKey="cdRatio" name="CD Ratio %" stroke="#D97706" strokeWidth={3} dot={{ r: 5, fill: '#D97706' }} />
             </ComposedChart>
         );
     };
@@ -236,7 +238,7 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: '#1a237e' }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
                         Deposit vs Loan Analysis with CD Ratio
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
@@ -261,25 +263,25 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
             {/* Summary Stats Cards */}
             <Stack direction="row" spacing={3} sx={{ mb: 3, pb: 2, borderBottom: '1px solid #e0e0e0', flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Avg Deposit Balance</Typography>
-                    <Typography variant="h6" fontWeight="bold" color="#1976D2">
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.avg_deposit_size', 'Avg Deposit Balance')}</Typography>
+                    <Typography variant="h6" fontWeight="bold" color="#2563EB">
                         {formatCurrency(stats.avgDeposit)}
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Avg Loan Balance</Typography>
-                    <Typography variant="h6" fontWeight="bold" color="#F44336">
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.avg_loan_size', 'Avg Loan Balance')}</Typography>
+                    <Typography variant="h6" fontWeight="bold" color="#DC2626">
                         {formatCurrency(stats.avgLoan)}
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Avg CD Ratio</Typography>
-                    <Typography variant="h6" fontWeight="bold" color="#FFA000">
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.avg_cd_ratio', 'Avg CD Ratio')}</Typography>
+                    <Typography variant="h6" fontWeight="bold" color="#D97706">
                         {stats.avgCDRatio > 0 ? `${stats.avgCDRatio.toFixed(2)}%` : 'N/A'}
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">CD Ratio Range</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.cd_ratio_range', 'CD Ratio Range')}</Typography>
                     <Typography variant="h6" fontWeight="bold">
                         {stats.minCDRatio > 0 ? `${stats.minCDRatio.toFixed(1)}% - ${stats.maxCDRatio.toFixed(1)}%` : 'N/A'}
                     </Typography>
@@ -323,11 +325,11 @@ const DepLoanTrendChart: React.FC<DepLoanTrendChartProps> = ({ data, loading = f
                     <Chip 
                         icon={<TrendingUpIcon />} 
                         label="Ideal CD Ratio: 60-80%" 
-                        sx={{ bgcolor: '#2E7D32', color: 'white' }}
+                        sx={{ bgcolor: '#059669', color: 'white' }}
                     />
                     <Chip 
                         label="Below 60% - Low Risk / Low Profitability" 
-                        sx={{ bgcolor: '#FFA000', color: 'white' }}
+                        sx={{ bgcolor: '#D97706', color: 'white' }}
                     />
                     <Chip 
                         label="Above 80% - High Risk / High Growth" 

@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import { MonthlyTrend } from '../../types';
 import { formatCurrency, getMonthName } from '../../utils/formatters';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface MonthlyTrendChartProps {
     data?: MonthlyTrend[];
@@ -13,6 +14,7 @@ interface MonthlyTrendChartProps {
 }
 
 const MonthlyTrendChart: React.FC<MonthlyTrendChartProps> = ({ data, isLoading }) => {
+    const { t } = useTranslation();
     if (isLoading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
@@ -24,7 +26,7 @@ const MonthlyTrendChart: React.FC<MonthlyTrendChartProps> = ({ data, isLoading }
     if (!data || data.length === 0) {
         return (
             <Box sx={{ p: 3, textAlign: 'center' }}>
-                <Typography color="textSecondary">No trend data available</Typography>
+                <Typography color="textSecondary">{t('common.no_data')}</Typography>
             </Box>
         );
     }
@@ -81,7 +83,7 @@ const MonthlyTrendChart: React.FC<MonthlyTrendChartProps> = ({ data, isLoading }
                         <Line 
                             type="monotone" 
                             dataKey="Deposits" 
-                            stroke="#4caf50" 
+                            stroke="#059669" 
                             strokeWidth={2}
                             dot={{ r: 4 }}
                             activeDot={{ r: 6 }}
@@ -89,7 +91,7 @@ const MonthlyTrendChart: React.FC<MonthlyTrendChartProps> = ({ data, isLoading }
                         <Line 
                             type="monotone" 
                             dataKey="Loans" 
-                            stroke="#f44336" 
+                            stroke="#DC2626" 
                             strokeWidth={2}
                             dot={{ r: 4 }}
                             activeDot={{ r: 6 }}

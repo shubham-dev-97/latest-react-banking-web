@@ -4,13 +4,13 @@ import {
     DepositFilter, DepositAnalysis,
     LoanFilter, LoanAnalysis,
     MonthlyTrendFilter, MonthlyTrend,
-    SummaryFilter, BankingSummary,HomeCustomerSummary, DepositOpeningSummary,NPASummary,HCDistribution,CASASummary, GLDashboardSummary, PortfolioOverview, InterestAndOverdueKPI
+    SummaryFilter, BankingSummary,HomeCustomerSummary, DepositOpeningSummary,NPASummary,HCDistribution,CASASummary, GLDashboardSummary, PortfolioOverview, InterestAndOverdueKPI, HomeDashboardAggregated
 } from '../types';
 
 
-//const API_BASE_URL = 'https://localhost:7009/api/dashboard';
+const API_BASE_URL = 'http://localhost:5142/api/dashboard';
 
-const API_BASE_URL = 'https://nerofinsbankapi.azurewebsites.net/api/dashboard';
+// const API_BASE_URL = 'https://nerofinsbankapi.azurewebsites.net/api/dashboard';
 
 
 const api = axios.create({
@@ -34,6 +34,15 @@ export const dashboardApi = {
     const response = await api.get<string[]>('/available-dates');
     console.log('📅 Available dates:', response.data);
     return response.data;
+    },
+
+    getHomeAggregatedData: async (asOnDate: string): Promise<HomeDashboardAggregated> => {
+        console.log('📊 Fetching aggregated home data for date:', asOnDate);
+        const response = await api.get<HomeDashboardAggregated>('/home-aggregated-data', {
+            params: { asOnDate }
+        });
+        console.log('📊 Aggregated home data:', response.data);
+        return response.data;
     },
 
 
@@ -169,6 +178,14 @@ getRbiLoanAuditDump: async (asOnDate: string): Promise<RbiLoanAuditDump[]> => {
     return response.data;
 },
 
+getRbiLoanAuditDumpPaginated: async (asOnDate: string, pageNumber: number, pageSize: number): Promise<{ data: RbiLoanAuditDump[], totalCount: number, pageNumber: number, pageSize: number, totalPages: number }> => {
+    console.log('🏦 Fetching paginated RBI Loan Audit for date:', asOnDate, 'Page:', pageNumber, 'Size:', pageSize);
+    const response = await api.get('/rbi-loan-audit-paginated', { 
+        params: { asOnDate, pageNumber, pageSize } 
+    });
+    return response.data;
+},
+
 
 getRbiDepositAuditDump: async (asOnDate: string): Promise<RbiDepositAuditDump[]> => {
     console.log('🏦 Fetching RBI Deposit Audit Dump for date:', asOnDate);
@@ -184,6 +201,48 @@ getRbiDepositAuditDumpPaginated: async (asOnDate: string, pageNumber: number, pa
     const response = await api.get('/rbi-deposit-audit-paginated', { 
         params: { asOnDate, pageNumber, pageSize } 
     });
+    return response.data;
+},
+
+getBranchPerformanceDashboard: async (
+    targetDate?: string,
+    regionName?: string,
+    performanceStatus?: string
+): Promise<BranchPerformanceResponse> => {
+    const params = new URLSearchParams();
+    if (targetDate) params.append('targetDate', targetDate);
+    if (regionName) params.append('regionName', regionName);
+    if (performanceStatus) params.append('performanceStatus', performanceStatus);
+    
+    // Remove '/dashboard/' from the path - correct URL
+    const url = `/BranchPerformance/dashboard${params.toString() ? `?${params.toString()}` : ''}`;
+    console.log('🏦 Fetching Branch Performance Dashboard:', url);
+    
+    const response = await api.get<BranchPerformanceResponse>(url);
+    console.log('🏦 Branch Performance Data:', response.data);
+    return response.data;
+},
+
+
+getBankKPIDashboard: async (
+    finYear?: string,
+    yearType?: string,
+    regionName?: string,
+    pbrcode?: number,
+    topRecords?: number
+): Promise<BankKPIDashboardResponse> => {
+    const params = new URLSearchParams();
+    if (finYear) params.append('finYear', finYear);
+    if (yearType) params.append('yearType', yearType);
+    if (regionName) params.append('regionName', regionName);
+    if (pbrcode) params.append('pbrcode', pbrcode.toString());
+    if (topRecords) params.append('topRecords', topRecords.toString());
+    
+    const url = `/BankKPI/dashboard${params.toString() ? `?${params.toString()}` : ''}`;
+    console.log('🏦 Fetching Bank KPI Dashboard:', url);
+    
+    const response = await api.get<BankKPIDashboardResponse>(url);
+    console.log('🏦 Bank KPI Data:', response.data);
     return response.data;
 },
 };

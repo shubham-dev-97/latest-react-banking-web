@@ -5,12 +5,16 @@ import {
     Menu as MenuIcon, 
     Logout, 
     AccountCircle,
-    Settings,
     Dashboard
 } from '@mui/icons-material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CurrencySelector from './CurrencySelector';
 import { useAuth } from '../../hooks/useAuth';
+import LanguageSelector from './LanguageSelector';
+import { bankColors } from '../../styles/bankColors';
+
+import { useTranslation } from '../../hooks/useTranslation';
+
 
 interface HeaderProps {
     toggleSidebar?: () => void;
@@ -20,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+    const { t } = useTranslation();
     
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -49,21 +54,21 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         switch(path) {
             case '/':
             case '/admin':
-                return 'Admin Dashboard';
+                return t('admin.admin_dashboard') || 'Admin Dashboard';
             case '/ceo-dashboard':
-                return 'CEO Dashboard';
+                return t('home.ceo_dashboard') || 'CEO Dashboard';
             case '/deposit':
-                return 'Deposit Analysis';
+                return t('deposit.deposit_analysis') || 'Deposit Analysis';
             case '/loan':
-                return 'Loan Analysis';
+                return t('loan.loan_analysis') || 'Loan Analysis';
             case '/summary':
-                return 'Banking Summary';
+                return t('summary.banking_summary') || 'Banking Summary';
             case '/casa':
-                return 'CASA Summary';
+                return t('sidebar.casa_summary') || 'CASA Summary';
             case '/gl-dashboard':
-                return 'GL Dashboard';
+                return t('sidebar.gl_dashboard') || 'GL Dashboard';
             default:
-                return 'Banking Dashboard';
+                return t('header.banking_dashboard') || 'Banking Dashboard';
         }
     };
 
@@ -89,19 +94,16 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         <AppBar 
             position="fixed" 
             sx={{ 
-                zIndex: (theme) => theme.zIndex.drawer + 1, 
-                bgcolor: '#1a237e',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+                zIndex: (theme) => theme.zIndex.drawer + 1,
             }}
         >
             <Toolbar>
                 {/* Menu Icon for Mobile */}
                 <IconButton
-                    color="inherit"
                     aria-label="open drawer"
                     edge="start"
                     onClick={toggleSidebar}
-                    sx={{ mr: 2, display: { sm: 'none' } }}
+                    sx={{ mr: 2, display: { sm: 'none' }, color: 'text.primary' }}
                 >
                     <MenuIcon />
                 </IconButton>
@@ -110,29 +112,30 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 <Typography 
                     variant="h6" 
                     component="div" 
+                    color="text.primary"
                     sx={{ 
                         flexGrow: 1, 
-                        fontWeight: 'bold',
+                        fontWeight: '600',
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1
                     }}
                 >
-                    <Dashboard sx={{ display: { xs: 'none', sm: 'block' } }} />
+                    <Dashboard sx={{ display: { xs: 'none', sm: 'block' }, color: bankColors.header.accent }} />
                     {getPageTitle()}
                 </Typography>
+
+                  {/* Language Selector */}
+                <LanguageSelector />
                 
                 {/* Currency Selector */}
-                <Box sx={{ mr: 2,
-                bgcolor: '#f5f5f5',
-
-                }}>
+                <Box sx={{ mr: 2, bgcolor: 'transparent' }}>
                     <CurrencySelector />
                 </Box>
                 
                 {/* Notifications */}
-                <Tooltip title="Notifications">
-                    <IconButton color="inherit" sx={{ mr: 1 }}>
+                <Tooltip title={t('header.notifications', 'Notifications')}>
+                    <IconButton sx={{ mr: 1, color: 'text.secondary' }}>
                         <Badge badgeContent={3} color="error">
                             <Notifications />
                         </Badge>
@@ -142,7 +145,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 {/* User Menu */}
                 {user ? (
                     <>
-                        <Tooltip title="Account settings">
+                        <Tooltip title={t('header.account_settings', 'Account settings')}>
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
@@ -153,11 +156,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                             >
                                 <Avatar 
                                     sx={{ 
-                                        width: 35, 
-                                        height: 35, 
-                                        bgcolor: '#ff9800',
+                                        width: 36, 
+                                        height: 36, 
+                                        bgcolor: bankColors.header.accent,
                                         fontSize: '0.9rem',
-                                        fontWeight: 'bold'
+                                        fontWeight: '600'
                                     }}
                                 >
                                     {getUserInitials()}
@@ -166,11 +169,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                         </Tooltip>
                         
                         {/* User Info - Visible on larger screens */}
-                        <Box sx={{ display: { xs: 'none', md: 'block' }, ml: 1 }}>
-                            <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
+                        <Box sx={{ display: { xs: 'none', md: 'block' }, ml: 1.5 }}>
+                            <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
                                 {getDisplayName()}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                            <Typography variant="caption" color="text.secondary">
                                 {user.roleName || 'User'}
                             </Typography>
                         </Box>
@@ -186,9 +189,10 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                                 elevation: 0,
                                 sx: {
                                     overflow: 'visible',
-                                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                    filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.1))',
                                     mt: 1.5,
                                     minWidth: 200,
+                                    borderRadius: 2,
                                     '& .MuiAvatar-root': {
                                         width: 32,
                                         height: 32,
@@ -206,6 +210,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                                         bgcolor: 'background.paper',
                                         transform: 'translateY(-50%) rotate(45deg)',
                                         zIndex: 0,
+                                        borderLeft: '1px solid #E2E8F0',
+                                        borderTop: '1px solid #E2E8F0',
                                     },
                                 },
                             }}
@@ -215,26 +221,26 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                             {/* User Info in Menu (Mobile) */}
                             <Box sx={{ display: { xs: 'block', md: 'none' }, px: 2, py: 1 }}>
                                 <Typography variant="subtitle2">{user.userName}</Typography>
-                                <Typography variant="caption" color="textSecondary">
+                                <Typography variant="caption" color="text.secondary">
                                     {user.roleName}
                                 </Typography>
-                                <Typography variant="caption" color="textSecondary" display="block">
+                                <Typography variant="caption" color="text.secondary" display="block">
                                     {user.emailID}
                                 </Typography>
                             </Box>
                             <MenuItem onClick={handleProfile}>
-                                <AccountCircle fontSize="small" sx={{ mr: 1 }} />
-                                Profile
+                                <AccountCircle fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                                {t('header.profile', 'Profile')}
                             </MenuItem>
                             <MenuItem onClick={handleLogout}>
-                                <Logout fontSize="small" sx={{ mr: 1 }} />
-                                Logout
+                                <Logout fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                                {t('header.logout', 'Logout')}
                             </MenuItem>
                         </Menu>
                     </>
                 ) : (
                     // Fallback when no user
-                    <IconButton color="inherit">
+                    <IconButton sx={{ color: 'text.secondary' }}>
                         <AccountCircle />
                     </IconButton>
                 )}

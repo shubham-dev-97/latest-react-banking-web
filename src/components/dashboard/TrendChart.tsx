@@ -8,6 +8,7 @@ import {
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { formatCurrency, formatNumber } from '../../utils/formatters';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface TrendChartProps {
     title: string;
@@ -81,6 +82,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
     gradient = true
 }) => {
     const theme = useTheme();
+    const { t } = useTranslation();
 
     if (!data || data.length === 0) {
         return (
@@ -96,7 +98,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
             }}>
                 <Box sx={{ textAlign: 'center' }}>
                     <TrendingUpIcon sx={{ fontSize: 48, color: '#9e9e9e', mb: 1 }} />
-                    <Typography color="textSecondary">No data available</Typography>
+                    <Typography color="textSecondary">{t('common.no_data')}</Typography>
                 </Box>
             </Paper>
         );
@@ -140,9 +142,9 @@ const TrendChart: React.FC<TrendChartProps> = ({
                     <LineChart {...commonProps}>
                         <defs>
                             {gradient && dataKeys.map(dk => (
-                                <linearGradient key={dk.key} id={getGradientId(dk.color || '#1976d2')} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={dk.color || '#1976d2'} stopOpacity={0.3}/>
-                                    <stop offset="95%" stopColor={dk.color || '#1976d2'} stopOpacity={0}/>
+                                <linearGradient key={dk.key} id={getGradientId(dk.color || '#2563EB')} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={dk.color || '#2563EB'} stopOpacity={0.3}/>
+                                    <stop offset="95%" stopColor={dk.color || '#2563EB'} stopOpacity={0}/>
                                 </linearGradient>
                             ))}
                         </defs>
@@ -161,7 +163,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                         <Tooltip content={<CustomTooltip dataKeys={dataKeys} />} />
                         <Legend content={<CustomLegend />} />
                         {showAverage && (
-                            <ReferenceLine y={average} stroke="#ff9800" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: '#ff9800' }} />
+                            <ReferenceLine y={average} stroke="#D97706" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: 'secondary.main' }} />
                         )}
                         {dataKeys.map((dk, idx) => (
                             <Line
@@ -173,7 +175,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                                 strokeWidth={3}
                                 dot={{ r: 5, fill: dk.color || theme.palette.primary.main, strokeWidth: 2, stroke: '#fff' }}
                                 activeDot={{ r: 7, stroke: dk.color || theme.palette.primary.main, strokeWidth: 2, fill: '#fff' }}
-                                fill={gradient ? `url(#${getGradientId(dk.color || '#1976d2')})` : 'none'}
+                                fill={gradient ? `url(#${getGradientId(dk.color || '#2563EB')})` : 'none'}
                             />
                         ))}
                     </LineChart>
@@ -197,7 +199,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                         <Tooltip content={<CustomTooltip dataKeys={dataKeys} />} />
                         <Legend content={<CustomLegend />} />
                         {showAverage && (
-                            <ReferenceLine y={average} stroke="#ff9800" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: '#ff9800' }} />
+                            <ReferenceLine y={average} stroke="#D97706" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: 'secondary.main' }} />
                         )}
                         {dataKeys.map((dk, idx) => (
                             <Bar
@@ -245,7 +247,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                                         yAxisId="right"
                                         dataKey={dk.key}
                                         name={dk.name}
-                                        fill={dk.color || '#4caf50'}
+                                        fill={dk.color || '#059669'}
                                         radius={[8, 8, 0, 0]}
                                         barSize={30}
                                     />
@@ -258,9 +260,9 @@ const TrendChart: React.FC<TrendChartProps> = ({
                                     type="monotone"
                                     dataKey={dk.key}
                                     name={dk.name}
-                                    stroke={dk.color || '#1976d2'}
+                                    stroke={dk.color || '#2563EB'}
                                     strokeWidth={3}
-                                    dot={{ r: 5, fill: dk.color || '#1976d2', strokeWidth: 2, stroke: '#fff' }}
+                                    dot={{ r: 5, fill: dk.color || '#2563EB', strokeWidth: 2, stroke: '#fff' }}
                                     activeDot={{ r: 7 }}
                                 />
                             );
@@ -273,9 +275,9 @@ const TrendChart: React.FC<TrendChartProps> = ({
                     <AreaChart {...commonProps}>
                         <defs>
                             {gradient && dataKeys.map(dk => (
-                                <linearGradient key={dk.key} id={getGradientId(dk.color || '#1976d2')} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor={dk.color || '#1976d2'} stopOpacity={0.4}/>
-                                    <stop offset="95%" stopColor={dk.color || '#1976d2'} stopOpacity={0.05}/>
+                                <linearGradient key={dk.key} id={getGradientId(dk.color || '#2563EB')} x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={dk.color || '#2563EB'} stopOpacity={0.4}/>
+                                    <stop offset="95%" stopColor={dk.color || '#2563EB'} stopOpacity={0.05}/>
                                 </linearGradient>
                             ))}
                         </defs>
@@ -294,7 +296,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                         <Tooltip content={<CustomTooltip dataKeys={dataKeys} />} />
                         <Legend content={<CustomLegend />} />
                         {showAverage && (
-                            <ReferenceLine y={average} stroke="#ff9800" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: '#ff9800' }} />
+                            <ReferenceLine y={average} stroke="#D97706" strokeDasharray="3 3" label={{ value: 'Avg', position: 'right', fill: 'secondary.main' }} />
                         )}
                         {dataKeys.map((dk, idx) => (
                             <Area
@@ -304,7 +306,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                                 name={dk.name}
                                 stroke={dk.color || theme.palette.primary.main}
                                 strokeWidth={2}
-                                fill={gradient ? `url(#${getGradientId(dk.color || '#1976d2')})` : (dk.color || theme.palette.primary.main)}
+                                fill={gradient ? `url(#${getGradientId(dk.color || '#2563EB')})` : (dk.color || theme.palette.primary.main)}
                                 fillOpacity={0.3}
                             />
                         ))}
@@ -328,7 +330,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
             {/* Header with Trend Indicator */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#1a237e', mb: 0.5 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 0.5 }}>
                         {title}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
@@ -358,8 +360,8 @@ const TrendChart: React.FC<TrendChartProps> = ({
             {data.length > 0 && (
                 <Stack direction="row" spacing={3} sx={{ mt: 2, pt: 2, borderTop: '1px solid #e0e0e0', justifyContent: 'center' }}>
                     <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="caption" color="textSecondary">Highest Value</Typography>
-                        <Typography variant="body2" fontWeight="bold" color="#1976d2">
+                        <Typography variant="caption" color="textSecondary">{t('dashboard.highest_value', 'Highest Value')}</Typography>
+                        <Typography variant="body2" fontWeight="bold" color="#2563EB">
                             {dataKeys[0].type === 'currency' 
                                 ? formatCurrency(Math.max(...data.map(d => d[dataKeys[0].key])))
                                 : dataKeys[0].type === 'number'
@@ -369,8 +371,8 @@ const TrendChart: React.FC<TrendChartProps> = ({
                         </Typography>
                     </Box>
                     <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="caption" color="textSecondary">Lowest Value</Typography>
-                        <Typography variant="body2" fontWeight="bold" color="#f44336">
+                        <Typography variant="caption" color="textSecondary">{t('dashboard.lowest_value', 'Lowest Value')}</Typography>
+                        <Typography variant="body2" fontWeight="bold" color="#DC2626">
                             {dataKeys[0].type === 'currency' 
                                 ? formatCurrency(Math.min(...data.map(d => d[dataKeys[0].key])))
                                 : dataKeys[0].type === 'number'
@@ -381,8 +383,8 @@ const TrendChart: React.FC<TrendChartProps> = ({
                     </Box>
                     {showAverage && (
                         <Box sx={{ textAlign: 'center' }}>
-                            <Typography variant="caption" color="textSecondary">Average</Typography>
-                            <Typography variant="body2" fontWeight="bold" color="#ff9800">
+                            <Typography variant="caption" color="textSecondary">{t('dashboard.average', 'Average')}</Typography>
+                            <Typography variant="body2" fontWeight="bold" color="#D97706">
                                 {dataKeys[0].type === 'currency' 
                                     ? formatCurrency(average)
                                     : dataKeys[0].type === 'number'

@@ -344,3 +344,14 @@ export interface RbiDepositAuditDump {
     account_ACTIVITY_STATUS: string;
     audit_REMARK: string;
 }
+
+export interface HomeDashboardAggregated {
+    customerSummary: HomeCustomerSummary;
+    depositOpening: DepositOpeningSummary;
+    npaSummary: NPASummary;
+    hcDistribution: HCDistribution[];
+    portfolioOverview: PortfolioOverview;
+    interestAndOverdueKPI: InterestAndOverdueKPI;
+    almBucketRBI: AlmBucketRBI[];
+    depLoanMonthlyTrend: DepLoanMonthlyTrend[];
+}

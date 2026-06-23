@@ -18,6 +18,7 @@ import PieChartIcon from '@mui/icons-material/PieChart';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import DownloadIcon from '@mui/icons-material/Download';
 import PrintIcon from '@mui/icons-material/Print';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface AlmBucketRBI {
     rbI_BUCKET?: string;        // Note: API returns "rbI_BUCKET"
@@ -36,6 +37,7 @@ interface AlmBucketChartProps {
 }
 
 const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }) => {
+    const { t } = useTranslation();
     const [viewType, setViewType] = useState<'chart' | 'table'>('chart');
     const [chartType, setChartType] = useState<'bar' | 'pie' | 'area'>('bar');
 
@@ -55,7 +57,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
         return (
             <Paper sx={{ p: 5, textAlign: 'center', borderRadius: 3 }}>
                 <CircularProgress />
-                <Typography sx={{ mt: 2 }}>Loading ALM data...</Typography>
+                <Typography sx={{ mt: 2 }}>{t('common.loading')}</Typography>
             </Paper>
         );
     }
@@ -63,7 +65,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
     if (!normalizedData || normalizedData.length === 0) {
         return (
             <Paper sx={{ p: 5, textAlign: 'center', borderRadius: 3 }}>
-                <Typography color="error">No ALM data available for the selected date.</Typography>
+                <Typography color="error">{t('common.no_data')}</Typography>
             </Paper>
         );
     }
@@ -71,9 +73,9 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
     // Color scheme for different buckets (banking professional colors)
     const getBucketColor = (bucket: string, index: number) => {
         const colors = [
-            '#2E7D32', // 1-14 Days - Dark Green
+            '#059669', // 1-14 Days - Dark Green
             '#43A047', // 15-28 Days - Green
-            '#FFA000', // 29 Days - 3 Months - Amber
+            '#D97706', // 29 Days - 3 Months - Amber
             '#FF6F00', // 3-6 Months - Orange
             '#D32F2F', // 6-12 Months - Red
             '#7B1FA2', // 1-3 Years - Purple
@@ -182,8 +184,8 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
                                     <stop offset="95%" stopColor="#D32F2F" stopOpacity={0.1}/>
                                 </linearGradient>
                                 <linearGradient id="colorMaturity" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#2E7D32" stopOpacity={0.8}/>
-                                    <stop offset="95%" stopColor="#2E7D32" stopOpacity={0.1}/>
+                                    <stop offset="5%" stopColor="#059669" stopOpacity={0.8}/>
+                                    <stop offset="95%" stopColor="#059669" stopOpacity={0.1}/>
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" />
@@ -199,7 +201,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
                             <Tooltip formatter={(value) => `₹${value} Cr`} />
                             <Legend />
                             <Area type="monotone" dataKey="outstanding" name="Outstanding Balance (Cr)" stroke="#D32F2F" fill="url(#colorOutstanding)" />
-                            <Area type="monotone" dataKey="maturity" name="Maturity Amount (Cr)" stroke="#2E7D32" fill="url(#colorMaturity)" />
+                            <Area type="monotone" dataKey="maturity" name="Maturity Amount (Cr)" stroke="#059669" fill="url(#colorMaturity)" />
                         </AreaChart>
                     </ResponsiveContainer>
                 );
@@ -224,8 +226,8 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
                                 return `₹${value} Cr`;
                             }} />
                             <Legend />
-                            <Bar yAxisId="left" dataKey="maturity" name="Maturity Amount (Cr)" fill="#2E7D32" radius={[8, 8, 0, 0]} />
-                            <Bar yAxisId="right" dataKey="accounts" name="No. of Accounts" fill="#1976D2" radius={[8, 8, 0, 0]} />
+                            <Bar yAxisId="left" dataKey="maturity" name="Maturity Amount (Cr)" fill="#059669" radius={[8, 8, 0, 0]} />
+                            <Bar yAxisId="right" dataKey="accounts" name="No. of Accounts" fill="#2563EB" radius={[8, 8, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 );
@@ -236,11 +238,11 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
         <TableContainer sx={{ maxHeight: 500 }}>
             <Table stickyHeader>
                 <TableHead>
-                    <TableRow sx={{ bgcolor: '#1a237e' }}>
-                        <TableCell sx={{ fontWeight: 'bold', bgcolor: '#1a237e', color: 'white' }}>Category</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#1a237e', color: 'white' }}>No. of Accounts</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#1a237e', color: 'white' }}>Outstanding Balance (INR Crores)</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: '#1a237e', color: 'white' }}>Maturity Amount (INR Crores)</TableCell>
+                    <TableRow sx={{ bgcolor: 'primary.main' }}>
+                        <TableCell sx={{ fontWeight: 'bold', bgcolor: 'primary.main', color: 'white' }}>Category</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: 'primary.main', color: 'white' }}>No. of Accounts</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: 'primary.main', color: 'white' }}>Outstanding Balance (INR Crores)</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', bgcolor: 'primary.main', color: 'white' }}>Maturity Amount (INR Crores)</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -263,7 +265,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
                             <TableCell align="right" sx={{ fontWeight: 500, color: '#D32F2F' }}>
                                 {(item.outstanding_BALANCE / 10000000).toFixed(2)}
                             </TableCell>
-                            <TableCell align="right" sx={{ fontWeight: 500, color: '#2E7D32' }}>
+                            <TableCell align="right" sx={{ fontWeight: 500, color: '#059669' }}>
                                 {(item.maturity_AMOUNT / 10000000).toFixed(2)}
                             </TableCell>
                         </TableRow>
@@ -278,7 +280,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
                         <TableCell align="right" sx={{ fontWeight: 'bold', color: '#D32F2F' }}>
                             {(totalOutstanding / 10000000).toFixed(2)}
                         </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', color: '#2E7D32' }}>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', color: '#059669' }}>
                             {(totalMaturity / 10000000).toFixed(2)}
                         </TableCell>
                     </TableRow>
@@ -297,7 +299,7 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
             {/* Header */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: '#1a237e' }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
                         ALM - RBI Bucket Analysis
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
@@ -322,20 +324,20 @@ const AlmBucketChart: React.FC<AlmBucketChartProps> = ({ data, loading = false }
             {/* Summary Stats Cards */}
             <Stack direction="row" spacing={3} sx={{ mb: 3, pb: 2, borderBottom: '1px solid #e0e0e0', flexWrap: 'wrap', gap: 2 }}>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Total Accounts</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.total_accounts', 'Total Accounts')}</Typography>
                     <Typography variant="h4" fontWeight="bold" color="#1a237e">
                         {formatNumber(totalAccounts)}
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Total Outstanding Balance</Typography>
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.total_outstanding', 'Total Outstanding Balance')}</Typography>
                     <Typography variant="h4" fontWeight="bold" color="#D32F2F">
                         {(totalOutstanding / 10000000).toFixed(2)} Cr
                     </Typography>
                 </Box>
                 <Box>
-                    <Typography variant="caption" color="textSecondary">Total Maturity Amount</Typography>
-                    <Typography variant="h4" fontWeight="bold" color="#2E7D32">
+                    <Typography variant="caption" color="textSecondary">{t('dashboard.total_maturity', 'Total Maturity Amount')}</Typography>
+                    <Typography variant="h4" fontWeight="bold" color="#059669">
                         {(totalMaturity / 10000000).toFixed(2)} Cr
                     </Typography>
                 </Box>
